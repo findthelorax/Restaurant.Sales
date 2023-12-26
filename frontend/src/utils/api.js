@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-// Auth
+//* Auth
+
 export const signup = async (username, password, role) => {
 	try {
 		const response = await axios.post(
@@ -13,19 +14,6 @@ export const signup = async (username, password, role) => {
 		throw error;
 	}
 };
-
-// export const login = async (username, password) => {
-// 	try {
-// 		const response = await axios.post(
-// 			`${process.env.REACT_APP_SERVER_URL}/login`,
-// 			{ username, password },
-// 			{ withCredentials: true }
-// 		);
-// 		return response.data;
-// 	} catch (error) {
-// 		throw error;
-// 	}
-// };
 
 export async function login(username, password) {
 	const response = await axios.post('/login', { username, password });
@@ -53,7 +41,7 @@ export const logout = async () => {
 	}
 };
 
-// Users
+//* Users
 
 // Add a user
 export const addUser = async (username, password) => {
@@ -108,7 +96,7 @@ export const fetchUsers = async () => {
 	}
 };
 
-// Admins
+//* Admins
 
 // Admin registration
 export const registerAdmin = async (username, password) => {
@@ -177,7 +165,7 @@ export const updateAdmin = async (adminId, updates) => {
 	}
 };
 
-// Profile
+//* Profile
 export const fetchProfile = async () => {
 	try {
 		const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/profile`, { withCredentials: true });
@@ -238,7 +226,7 @@ export const deleteDatabase = async (databaseName) => {
 	await axios.delete(`${process.env.REACT_APP_SERVER_URL}/api/deleteDatabase/${databaseName}`);
 };
 
-// Team Members
+//* Team Members
 export const getTeamMembers = async () => {
 	try {
 		const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/teamMembers`);
@@ -271,7 +259,7 @@ export const deleteTeamMember = async (id) => {
 	}
 };
 
-// Daily Totals
+//* Daily Totals
 export const getAllDailyTotals = async () => {
 	try {
 		const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/teamMembers/allDailyTotals`);
@@ -307,7 +295,7 @@ export const deleteDailyTotalFromServer = async (teamMemberId, dateId) => {
 	}
 };
 
-// Weekly Totals
+//* Weekly Totals
 export const getWeeklyTotal = async (teamMemberId, week) => {
 	try {
 		const response = await axios.get(

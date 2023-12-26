@@ -1,11 +1,15 @@
 import { addTeamMember, deleteTeamMember } from '../utils/api';
 
-export const addTeamMemberToTeam = (teamMemberName, position, setTeam, clearInputs) => {
+export const addTeamMemberToTeam = (teamMemberName, position, teamMembers, setTeamMembers, clearInputs) => {
 	return async () => {
 		if (teamMemberName && position) {
+			if (teamMembers.some(member => member.name === teamMemberName && member.position === position)) {
+				alert('A member with this name and position already exists.');
+				return;
+			}
 			try {
 				const newMember = await addTeamMember(teamMemberName, position);
-				setTeam((prevTeam) => [...prevTeam, newMember]);
+				setTeamMembers((prevTeamMembers) => [...prevTeamMembers, newMember]);
 				clearInputs();
 			} catch (error) {
 				console.error('Error adding team member:', error);
@@ -17,7 +21,7 @@ export const addTeamMemberToTeam = (teamMemberName, position, setTeam, clearInpu
 	};
 };
 
-export const deleteTeamMemberFromTeam = (setTeam) => {
+export const deleteTeamMemberFromTeam = (setTeamMembers) => {
 	return async (id, teamMemberName, position) => {
 		const confirmation = window.confirm(
 			`ARE YOU SURE YOU WANT TO DELETE:\n\n${
@@ -30,7 +34,7 @@ export const deleteTeamMemberFromTeam = (setTeam) => {
 
 		try {
 			await deleteTeamMember(id);
-			setTeam((prevTeam) => prevTeam.filter((member) => member._id !== id));
+			setTeamMembers((prevTeamMembers) => prevTeamMembers.filter((member) => member._id !== id));
 		} catch (error) {
 			console.error('Error deleting team member:', error);
 			alert('Failed to delete team member');

@@ -1,29 +1,14 @@
 import React, { useEffect, useContext, useMemo } from 'react';
-import { TeamContext } from '../../contexts/TeamContext';
+import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 import { getTeamMembers } from '../../utils/api';
-import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
 import { deleteTeamMemberFromTeam } from '../../hooks/teamMembersLogic';
 import TeamMembersRender from './teamMembersListRender';
 
 const POSITIONS = ['bartender', 'host', 'server', 'runner'];
 
 function TeamMembersList() {
-	const { team, setTeam } = useContext(TeamContext);
-	const { refreshDailyTotals } = useContext(DailyTotalsContext);
-	const deleteMember = deleteTeamMemberFromTeam(setTeam);
-
-	useEffect(() => {
-		const fetchTeamMembers = async () => {
-			try {
-				const teamMembers = await getTeamMembers();
-				setTeam(teamMembers);
-			} catch (error) {
-				console.error('Error fetching team members:', error);
-			}
-		};
-
-		fetchTeamMembers();
-	}, [setTeam, refreshDailyTotals]);
+	const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
+	const deleteMember = deleteTeamMemberFromTeam(setTeamMembers);
 
 	const teamByPosition = useMemo(() => {
 		const teamByPosition = POSITIONS.reduce((acc, position) => {
@@ -33,7 +18,7 @@ function TeamMembersList() {
 
 		teamByPosition['other'] = [];
 
-		team.forEach((member) => {
+		teamMembers.forEach((member) => {
 			if (member.position && teamByPosition.hasOwnProperty(member.position)) {
 				teamByPosition[member.position].push(member);
 			} else {

@@ -1,10 +1,10 @@
-import React, { useState, useContext } from 'react';
-import { TeamContext } from '../../contexts/TeamContext';
+import React, { useState, useContext, useCallback } from 'react';
+import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 import { addTeamMemberToTeam } from '../../hooks/teamMembersLogic';
 import TeamMemberFormRender from './teamMembersFormRender';
 
 function TeamMemberForm() {
-    const { setTeam } = useContext(TeamContext);
+    const { setTeamMembers } = useContext(TeamMembersContext);
     const [teamMemberName, setTeamMemberName] = useState('');
     const [position, setPosition] = useState('bartender');
     
@@ -13,7 +13,7 @@ function TeamMemberForm() {
         setPosition('server');
     };
     
-    const addTeamMember = addTeamMemberToTeam(teamMemberName, position, setTeam, clearInputs);
+    const addTeamMember = useCallback(() => addTeamMemberToTeam(teamMemberName, position, setTeamMembers, clearInputs), [teamMemberName, position]);
 
     return (
         <TeamMemberFormRender
@@ -26,4 +26,4 @@ function TeamMemberForm() {
     );
 }
 
-export default TeamMemberForm;
+export default React.memo(TeamMemberForm);

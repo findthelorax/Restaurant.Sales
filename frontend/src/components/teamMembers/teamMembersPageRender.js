@@ -28,7 +28,7 @@ const TeamMembersPageRender = ({
     addMember,
     deleteMember,
     teamByPosition,
-    team,
+    teamMembers,
     columns,
 }) => {
     return (
@@ -92,7 +92,7 @@ const TeamMembersPageRender = ({
                     ))}
                     <Box sx={{ height: 400, width: '100%' }}>
                         <DataGrid
-                            rows={team}
+                            rows={teamMembers}
                             columns={columns}
                             pageSize={5}
                             rowsPerPageOptions={[5]}
