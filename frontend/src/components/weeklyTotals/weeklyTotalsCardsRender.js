@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { TeamContext } from '../../contexts/TeamContext';
+
 import { FaArrowUp, FaArrowDown, FaWhiskeyGlass, FaUtensils } from 'react-icons/fa6';
 import { CiBeerMugFull } from 'react-icons/ci';
 import { GiHamburger } from 'react-icons/gi';
@@ -9,9 +9,9 @@ import { success, error } from '../../theme/colors';
 import { Avatar, Card, CardContent, Stack, SvgIcon, Typography, CircularProgress } from '@mui/material';
 
 function WeeklyFoodSalesCardRender({ selectedDate, salesDifferences, sx, totalWeeklyFoodSales }) {
+	// !
 	console.log('🚀 ~ file: weeklyTotalsCardsRender.js:92 ~ salesDifferences:', salesDifferences);
-	const { team } = useContext(TeamContext);
-	if (!team) {
+	if (!teamMembers) {
 		return <CircularProgress />;
 	}
 
@@ -87,9 +87,9 @@ function WeeklyBarSalesCardRender({
 	sx,
 	totalWeeklyBarSales,
 }) {
-	const { team } = useContext(TeamContext);
+// !
 	console.log("🚀 ~ file: weeklyTotalsCardsRender.js:16 ~ salesDifferences:", salesDifferences)
-	if (!team) {
+	if (!teamMembers) {
 		return <CircularProgress />;
 	}
 	const weekStart = moment(selectedDate).startOf('week').format('YYYY-MM-DD');

@@ -2,7 +2,7 @@ import { useMemo, useContext } from 'react';
 import moment from 'moment';
 import { calculateDailySalesDifferences } from '../../hooks/salesTotalsLogic';
 import { DailyFoodSalesCardRender, DailyBarSalesCardRender } from '../dailyTotals/dailyTotalsCardsRender';
-import { TeamContext } from '../../contexts/TeamContext';
+import { TeamContext } from '../../contexts/TeamMembersContext';
 
 function DailyFoodSalesCard({ selectedDate }) {
 	const { team } = useContext(TeamContext);

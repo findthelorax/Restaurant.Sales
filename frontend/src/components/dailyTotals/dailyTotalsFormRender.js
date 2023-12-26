@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { TextField, FormControl, InputLabel, Select, MenuItem, Button, Typography, Card } from '@mui/material';
 import { NumericFormat } from 'react-number-format';
 import { Box } from '@mui/system';
-import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
+// import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -46,11 +46,11 @@ export function InputField({ id, value = '', onChange, label, type = 'number', p
 }
 
 export function TeamMemberSelect({ team, value = '', onChange }) {
-	const { setSelectedTeamMember } = useContext(DailyTotalsContext);
+	// const { setSelectedTeamMember } = useContext(DailyTotalsContext);
 	const handleTeamMemberSelect = (event) => {
 		const selectedMember = team.find((member) => member._id === event.target.value);
 		onChange('teamMemberId', selectedMember._id);
-		setSelectedTeamMember(selectedMember);
+		// setSelectedTeamMember(selectedMember);
 	};
 	return (
 		<FormControl fullWidth margin="normal">
@@ -59,7 +59,7 @@ export function TeamMemberSelect({ team, value = '', onChange }) {
 				labelId="teamMemberSelectName"
 				id="teamMemberSelectName"
 				value={value ? value._id : ''}
-				onChange={handleTeamMemberSelect}
+				// onChange={handleTeamMemberSelect}
 			>
 				<MenuItem value="" disabled>
 					Select Team Member

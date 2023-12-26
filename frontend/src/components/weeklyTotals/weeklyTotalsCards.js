@@ -1,16 +1,15 @@
 import React, { useContext } from 'react';
 import moment from 'moment';
-import { TeamContext } from '../../contexts/TeamContext';
+
 import { WeeklyBarSalesCardRender, WeeklyFoodSalesCardRender } from './weeklyTotalsCardsRender';
 import { calculateWeeklySalesDifferences } from '../../hooks/salesTotalsLogic';
 
 export function WeeklyFoodSalesCard({ selectedDate }) {
-	const { team } = useContext(TeamContext);
 
 	const selectedWeekStart = moment(selectedDate).startOf('week');
 	const selectedWeekEnd = moment(selectedWeekStart).endOf('week');
 
-	const allWeeklyTotals = team.flatMap((member) =>
+	const allWeeklyTotals = teamMembers.flatMap((member) =>
 		member.weeklyTotals.filter((total) => {
 			const totalDate = moment(total.date);
 			return totalDate.isSameOrAfter(selectedWeekStart) && totalDate.isSameOrBefore(selectedWeekEnd);
@@ -31,12 +30,11 @@ export function WeeklyFoodSalesCard({ selectedDate }) {
 }
 
 export function WeeklyBarSalesCard({ selectedDate }) {
-	const { team } = useContext(TeamContext);
 
 	const selectedWeekStart = moment(selectedDate).startOf('week');
 	const selectedWeekEnd = moment(selectedWeekStart).endOf('week');
 
-	const allWeeklyTotals = team.flatMap((member) =>
+	const allWeeklyTotals = teamMembers.flatMap((member) =>
 		member.weeklyTotals.filter((total) => {
 			const totalDate = moment(total.date);
 			return totalDate.isSameOrAfter(selectedWeekStart) && totalDate.isSameOrBefore(selectedWeekEnd);

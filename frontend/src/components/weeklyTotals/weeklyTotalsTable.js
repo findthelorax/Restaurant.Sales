@@ -1,12 +1,12 @@
 import React, { useContext, useMemo } from 'react';
-import { TeamContext } from '../../contexts/TeamContext';
+// import { TeamContext } from '../../contexts/TeamContext';
 import '../../app/App.css';
 import moment from 'moment';
 import WeeklyTotalsTableRender from './weeklyTotalsTableRender';
 import { titleToPropName, titles, formatUSD } from '../../hooks/salesTotalsLogic';
 
 function WeeklyTotalsTable({ selectedDate, setSelectedDate }) {
-	const { team } = useContext(TeamContext);
+	//! const { teamMembers } = useContext(TeamContext);
 	const date = moment(selectedDate);
 
 	const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -22,7 +22,7 @@ function WeeklyTotalsTable({ selectedDate, setSelectedDate }) {
 				return dayTotal;
 			});
 
-		team.forEach((member) => {
+		teamMembers.forEach((member) => {
 			member.dailyTotals.forEach((total) => {
 				const totalDate = moment(total.date);
 				const selectedWeekStart = moment(selectedDate).startOf('week');
@@ -38,7 +38,7 @@ function WeeklyTotalsTable({ selectedDate, setSelectedDate }) {
 		});
 
 		return totals;
-	}, [team, selectedDate]);
+	}, [teamMembers, selectedDate]);
 
 	const handleDateChange = (date) => {
 		setSelectedDate(date);
@@ -64,7 +64,7 @@ function WeeklyTotalsTable({ selectedDate, setSelectedDate }) {
 
 	return (
 		<WeeklyTotalsTableRender
-			teamMembers={team}
+			teamMembers={teamMembers}
 			date={date}
 			handleDateChange={handleDateChange}
 			rows={rows}

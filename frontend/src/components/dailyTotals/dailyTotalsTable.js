@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from 'react';
 import moment from 'moment';
-import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
+// import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
 import DailyTotalsTableRender from '../dailyTotals/dailyTotalsTableRender';
-import { TeamContext } from '../../contexts/TeamContext';
+import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 import { useGetAllDailyTotals } from '../../hooks/getAllDailyTotals';
 import { DeleteButton } from '../deleteButton';
 
@@ -23,14 +23,14 @@ const columnNames = {
 function DailyTotalsTable() {
 	// const { refreshDailyTotals } = useContext(DailyTotalsContext);
 	// const { deleteDailyTotal } = useContext(DailyTotalsContext);
-	const { team } = useContext(TeamContext);
+    const teamMembers = useContext(TeamMembersContext);
 	const { fetchAllDailyTotals } = useGetAllDailyTotals();
 
 	// useEffect(() => {
 	// 	fetchAllDailyTotals();
 	// }, [refreshDailyTotals, fetchAllDailyTotals]);
 
-	const rows = team.flatMap((teamMember) =>
+	const rows = teamMembers.flatMap((teamMember) =>
 		teamMember.dailyTotals.map((dailyTotal) => {
 			const localDate = moment.utc(dailyTotal.date).add(moment().utcOffset(), 'minutes').format('MMM D, YYYY');
 			return {

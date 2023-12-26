@@ -5,7 +5,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { Typography } from '@mui/material';
 import { DeleteButton } from '../../components/deleteButton';
 
-function DailyTotalsTableRender({ rows, columns, frameworkComponents }) {
+function DailyTotalsTableRender({ rows, columns }) {
 	const defaultColDef = {
 		sortable: true,
 		filter: true,
@@ -17,7 +17,7 @@ function DailyTotalsTableRender({ rows, columns, frameworkComponents }) {
 					rowData={rows}
 					columnDefs={columns}
 					defaultColDef={defaultColDef}
-					frameworkComponents={{ ...frameworkComponents, deleteButton: DeleteButton }}
+					// frameworkComponents={{ ...frameworkComponents, deleteButton: DeleteButton }}
 				/>
 			</div>
 	);
