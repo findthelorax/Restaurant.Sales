@@ -3,11 +3,11 @@ import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModules } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { DeleteTMButton } from '../deleteButton';
-import { AgGridSearch, AgGridExport, DeleteButtonRender } from '../customAgGridHeader';
+import { AgGridSearch, AgGridExport, DeleteTMButtonRender } from '../customAgGridHeader';
 const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
 function TeamMembersListRender({ teamByPosition, deleteTeamMember }) {
+	// eslint-disable-next-line
 	const [gridApi, setGridApi] = React.useState(null);
 
 	const onGridReady = (params) => {
@@ -20,6 +20,7 @@ function TeamMembersListRender({ teamByPosition, deleteTeamMember }) {
 			headerName: 'Team',
 			width: 130,
 			filter: 'agTextColumnFilter',
+			checkboxSelection: true,
 		},
 		{
 			field: 'teamMemberLastName',
@@ -42,7 +43,7 @@ function TeamMembersListRender({ teamByPosition, deleteTeamMember }) {
 			headerComponent: AgGridExport,
 			sortable: false,
 			filter: AgGridSearch,        
-			cellRenderer: DeleteButtonRender,
+			cellRenderer: DeleteTMButtonRender,
 			cellRendererParams: {
 				deleteMember: deleteTeamMember,
 			},
@@ -60,8 +61,6 @@ function TeamMembersListRender({ teamByPosition, deleteTeamMember }) {
 
 	const gridOptions = {
 		defaultColDef: {
-			filter: true, // this makes all columns use 'text' filter by default
-			floatingFilter: true,
 			filterParams: {
 				buttons: ['reset', 'apply'],
 				closeOnApply: true,
@@ -71,8 +70,9 @@ function TeamMembersListRender({ teamByPosition, deleteTeamMember }) {
 		columnDefs: columns,
 		onGridReady: onGridReady,
 		rowData: rows,
+		rowSelection: 'multiple',
 		pagination: true,
-		paginationPageSize: 5,
+		paginationPageSize: 20,
 		modules: AllCommunityModules,
 	};
 

@@ -4,7 +4,7 @@ import { POSITIONS } from '../../utils/constraints';
 import { StyledCard, StyledBox, StyledTextField, StyledFormControl, StyledButton } from '../../styles/teamMemberFormStyles';
 
 function TeamMemberForm({ teamMemberFirstName, setTeamMemberFirstName, teamMemberLastName, setTeamMemberLastName, position = '', setPosition, addTeamMember }) {
-	const [open, setOpen] = useState(false);
+	const [setOpen] = useState(false);
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		addTeamMember();

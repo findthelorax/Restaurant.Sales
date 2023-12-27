@@ -1,8 +1,6 @@
 import { addTeamMember, deleteTeamMember } from '../api/teamMembers';
 
 export const addTeamMemberToTeam = (teamMemberFirstName, teamMemberLastName, position, teamMembers, setTeamMembers, clearInputs) => {
-	console.log("🚀 ~ file: teamMembersLogic.js:4 ~ addTeamMemberToTeam ~ teamMemberLastName:", teamMemberLastName)
-	console.log("🚀 ~ file: teamMembersLogic.js:4 ~ addTeamMemberToTeam ~ teamMemberFirstName:", teamMemberFirstName)
 	return async () => {
 		if (teamMemberFirstName && teamMemberLastName && position) {
 			try {

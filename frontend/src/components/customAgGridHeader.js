@@ -28,8 +28,7 @@ export function AgGridExport({ api }) {
     );
 }
 
-export const DeleteButtonRender = (props) => {
-    console.log("🚀 ~ file: customAgGridHeader.js:32 ~ DeleteButtonRender ~ props.data:", props.data)
+export const DeleteTMButtonRender = (props) => {
     const onButtonClick = async () => {
         // Delete team member
         try {
