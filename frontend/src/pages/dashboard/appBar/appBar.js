@@ -3,14 +3,13 @@ import { Toolbar, IconButton, Badge, Avatar, Divider, Box, Button } from '@mui/m
 import { Notifications as NotificationsIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import { buttonStyles } from '../../../styles/appBarStyling';
 import { darkTheme } from '../../../styles/darkTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import { StyledAppBar } from '../../../styles/drawerStyling';
+import { StyledAppBar, PinkStyledButton } from '../../../styles/mainLayoutStyles';
 
 function ButtonField(props) {
 	const {
@@ -23,17 +22,16 @@ function ButtonField(props) {
 	} = props;
 
 	return (
-		<Button
+		<PinkStyledButton
 			variant="outlined"
 			id={id}
 			disabled={disabled}
 			ref={ref}
 			aria-label={ariaLabel}
 			onClick={() => setOpen?.((prev) => !prev)}
-			sx={buttonStyles}
 		>
 			{label ? `Date: ${label}` : 'Pick a date'}
-		</Button>
+		</PinkStyledButton>
 	);
 }
 

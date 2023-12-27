@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { InputLabel, Select, MenuItem } from '@mui/material';
 import { POSITIONS } from '../../utils/constraints';
-import { StyledCard, StyledBox, StyledTextField, StyledFormControl, StyledButton } from '../../styles/teamMemberFormStyles';
+import { StyledCard, StyledBox, StyledTextField, StyledFormControl, PinkStyledButton } from '../../styles/mainLayoutStyles';
 
 function TeamMemberForm({ teamMemberFirstName, setTeamMemberFirstName, teamMemberLastName, setTeamMemberLastName, position = '', setPosition, addTeamMember }) {
-	const [setOpen] = useState(false);
+	const [open, setOpen] = useState(false);
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		addTeamMember();
@@ -52,9 +52,9 @@ function TeamMemberForm({ teamMemberFirstName, setTeamMemberFirstName, teamMembe
 						))}
 					</Select>
 				</StyledFormControl>
-				<StyledButton variant="contained" color="primary" type="submit">
+				<PinkStyledButton variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
 					Add Team Member
-				</StyledButton>
+				</PinkStyledButton>
 			</StyledBox>
 		</StyledCard>
 	);

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Toolbar } from '@mui/material';
+import { Box } from '@mui/material';
 import SearchAppBar from './dashboard/appBar/appBar';
 import { PermanentDrawerLeft } from './dashboard/drawer/Drawer';
 import Dashboard from './Dashboard';
 // import TeamMembersPage from '../teamMembers/TeamMembersPage';
-// import SettingsPage from '../Settings';
+import SettingsPage from './Settings';
 // import DatabasePage from '../database/databasePage';
 import moment from 'moment';
-import { Outlet } from 'react-router-dom';
+// import { Outlet } from 'react-router-dom';
 // import { useAuth } from '../../contexts/AuthContext';
 
 function MainLayout() {
@@ -29,8 +29,8 @@ function MainLayout() {
 			// 	return <TeamMembersPage />;
 			// case 'Database':
 			// 	return <DatabasePage />;
-			// case 'Settings':
-			// 	return <SettingsPage />;
+			case 'Settings':
+				return <SettingsPage />;
 			default:
 				return null;
 		}

@@ -1,8 +1,8 @@
 import React from 'react';
 import { MainListItems, SecondaryListItems, SettingsListItems } from './NavItemsList';
-import { Box, ListItem, Avatar } from '@mui/material';
+import { Box, ListItem } from '@mui/material';
 import restaurantPNG from '../../../assets/restaurant.png';
-import { StyledDrawer, drawerWidth } from '../../../styles/drawerStyling';
+import { StyledDrawer, drawerWidth, StyledDrawerAvatar } from '../../../styles/mainLayoutStyles';
 
 export function PermanentDrawerLeft({ setSelectedMenu }) {
     return (
@@ -16,11 +16,10 @@ export function PermanentDrawerLeft({ setSelectedMenu }) {
                 anchor="left"
             >
                 <ListItem sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <Avatar
+                    <StyledDrawerAvatar
                         src={restaurantPNG}
                         alt="Restaurant"
                         variant="square"
-                        sx={{ width: 48, height: 48 }}
                     />
                 </ListItem>
                 <Box>
