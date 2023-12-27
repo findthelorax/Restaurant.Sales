@@ -3,11 +3,11 @@ import { AppBar, Toolbar, IconButton, InputBase, Badge, Avatar, Divider } from '
 import { Search as SearchIcon, Notifications as NotificationsIcon, Settings as SettingsIcon } from '@mui/icons-material';
 // import { Link } from 'react-router-dom';
 
-import { drawerWidth } from '../drawer/Drawer';
+import { StyledAppBar, drawerWidth } from '../../../styles/drawerStyling';
 
 function SearchAppBar() {
 	return (
-		<AppBar position="sticky" style={{ zIndex: 999}}>
+		<StyledAppBar>
 			<Toolbar>
 				<IconButton edge="start" color="inherit">
 					<SearchIcon />
@@ -29,7 +29,7 @@ function SearchAppBar() {
 					<SettingsIcon />
 				</IconButton> */}
 			</Toolbar>
-		</AppBar>
+		</StyledAppBar>
 	);
 }
 

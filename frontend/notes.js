@@ -78,7 +78,7 @@ function TeamMembersTable() {
 
 
 
-I was looking at teamMembers and forEach in my daily and weekly totals table. how can I get the teamMembers but only change the table when a daily or weekly total is changed
+I look at teamMembers and map their daily and weekly totals to populate a table. how can I get the teamMembers dailyTotals but only change the table when a daily or weekly total is changed
 
 GitHub Copilot
 To achieve this, you can use the useEffect hook to listen for changes in the daily or weekly totals and update the table accordingly. Here's how you might do this:
@@ -147,6 +147,23 @@ function DailyTotalsTable({ selectedDate, titleToPropName }) {
 }
 
 In these examples, the WeeklyTotalsTable and DailyTotalsTable components use the useTotalsForWeek hook to get the weeklyTotalsForWeek and dailyTotalsForWeek data. They don't consume the TeamMembersContext, DailyTotalsContext, or WeeklyTotalsContext directly, so they won't re-render when other parts of the context change. The useTotalsForWeek hook includes the logic to fetch new data when necessary, so the WeeklyTotalsTable and DailyTotalsTable components don't need to worry about that.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 The approach described in the notes is already quite efficient as it uses React's context and hooks to manage state and side effects. However, there are always different ways to solve a problem in programming. Here's an alternative approach using Redux:

@@ -1,36 +1,68 @@
 import * as React from 'react';
-import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
-import { IconButton, Typography } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { AgGridReact } from 'ag-grid-react';
+import { AllCommunityModules } from 'ag-grid-community';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
+import { DeleteTMButton } from '../deleteButton';
 
 const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
-function CustomToolbar() {
-    return (
-        <GridToolbarContainer>
-            <GridToolbarExport />
-        </GridToolbarContainer>
-    );
-}
+function TeamMembersListRender({ teamByPosition, deleteTeamMember }) {
+	const [gridApi, setGridApi] = React.useState(null);
 
-function TeamMembersRender({ teamByPosition, deleteMember }) {
+	const onGridReady = (params) => {
+		setGridApi(params.api);
+	};
+
+	const onSearchChange = (event) => {
+		const value = event.target.value;
+		gridApi.setQuickFilter(value);
+	};
+	
+	const exportData = () => {
+		gridApi.exportDataAsCsv();
+	};
+	
 	const columns = [
-		{ field: 'teamMemberName', headerName: 'Name', width: 130 },
-		{ field: 'position', headerName: 'Position', width: 130 },
-		{ field: 'phoneNumber', headerName: 'Phone Number', width: 130 },
-		{ field: 'email', headerName: 'Email', width: 130 },
 		{
-			field: 'delete',
-			headerName: 'Delete',
-			sortable: false,
-			width: 100,
-			renderCell: (params) => (
-				<IconButton
-					onClick={() => deleteMember(params.row._id, params.row.teamMemberName, params.row.position)}
-				>
-					<DeleteIcon />
-				</IconButton>
-			),
+			headerName: 'Info',
+			children: [
+				{ 
+					headerComponentFramework: () => <input type="text" onChange={onSearchChange} placeholder="Search..." />,
+					children: [
+						{ field: 'teamMemberName', headerName: 'Name', sortable: true, filter: true },
+						{ field: 'position', headerName: 'Position', sortable: true, filter: true },
+					]
+				}
+			]
+		},
+		{
+			headerName: 'Contact',
+			children: [
+				{ field: 'phoneNumber', headerName: 'Phone Number', sortable: false, filter: true },
+				{ field: 'email', headerName: 'Email', sortable: false, filter: true },
+			]
+		},
+		{
+			headerName: '',
+			children: [
+				{
+					headerComponentFramework: () => <button onClick={exportData}>Export</button>,
+					children: [
+						{
+							field: 'delete',
+							headerName: 'Delete',
+							sortable: false,
+							filter: false,
+							cellRenderer: 'DeleteTMButton',
+							cellRendererParams: {
+								onClick: deleteTeamMember,
+								label: 'Delete',
+							},
+						},
+					]
+				}
+			]
 		},
 	];
 
@@ -43,22 +75,17 @@ function TeamMembersRender({ teamByPosition, deleteMember }) {
 		}));
 
 	return (
-		<div style={{ height: '100%', width: '100%', marginBottom: '5px' }}>
-			<Typography variant="h6" gutterBottom>
-				Team Members
-			</Typography>
-			<DataGrid
-				rows={rows}
-				columns={columns}
-				pageSize={5}
-				rowsPerPageOptions={[10]}
-				getRowId={(row) => row._id}
-				slots={{
-				    Toolbar: CustomToolbar,
-				}}
+		<div className="ag-theme-quartz-dark" style={{ height: 400, width: '100%' }}>
+			<AgGridReact
+				onGridReady={onGridReady}
+				rowData={rows}
+				columnDefs={columns}
+				pagination={true}
+				paginationPageSize={5}
+				modules={AllCommunityModules}
 			/>
 		</div>
 	);
 }
 
-export default TeamMembersRender;
+export default TeamMembersListRender;

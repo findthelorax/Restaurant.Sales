@@ -2,9 +2,8 @@ import React, { useEffect, useContext, useMemo } from 'react';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 import { getTeamMembers } from '../../utils/api';
 import { deleteTeamMemberFromTeam } from '../../hooks/teamMembersLogic';
-import TeamMembersRender from './teamMembersListRender';
-
-const POSITIONS = ['bartender', 'host', 'server', 'runner'];
+import TeamMembersListRender from './teamMembersListRender';
+import { POSITIONS } from '../../utils/constraints';
 
 function TeamMembersList() {
 	const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
@@ -40,9 +39,9 @@ function TeamMembersList() {
 				}),
 			])
 		);
-	}, [team]);
+	}, [teamMembers]);
 
-	return <TeamMembersRender teamByPosition={teamByPosition} deleteMember={deleteMember} />;
+	return <TeamMembersListRender teamByPosition={teamByPosition} deleteMember={deleteMember} />;
 }
 
 export default TeamMembersList;

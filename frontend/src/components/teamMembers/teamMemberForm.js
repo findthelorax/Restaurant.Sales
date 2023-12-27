@@ -4,16 +4,16 @@ import { addTeamMemberToTeam } from '../../hooks/teamMembersLogic';
 import TeamMemberFormRender from './teamMembersFormRender';
 
 function TeamMemberForm() {
-    const { setTeamMembers } = useContext(TeamMembersContext);
+    const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
     const [teamMemberName, setTeamMemberName] = useState('');
-    const [position, setPosition] = useState('bartender');
-    
+    const [position, setPosition] = useState('Bartender');
+
     const clearInputs = () => {
         setTeamMemberName('');
-        setPosition('server');
+        setPosition('Server');
     };
     
-    const addTeamMember = useCallback(() => addTeamMemberToTeam(teamMemberName, position, setTeamMembers, clearInputs), [teamMemberName, position]);
+    const addTeamMember = addTeamMemberToTeam(teamMemberName, position, teamMembers, setTeamMembers, clearInputs);
 
     return (
         <TeamMemberFormRender

@@ -51,7 +51,7 @@ function MainLayout() {
 			>
 				<SearchAppBar open={isDrawerOpen} handleDrawerToggle={handleDrawerToggle} />
 				<Box component="main" sx={{ p: { xs: 2, sm: 3 } }}>
-					<Toolbar />
+					{/* <Toolbar /> */}
 					{renderSelectedComponent()}
 				</Box>
 			</Box>

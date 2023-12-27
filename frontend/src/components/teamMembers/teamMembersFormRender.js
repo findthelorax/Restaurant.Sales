@@ -1,7 +1,6 @@
 import React from 'react';
 import { TextField, FormControl, InputLabel, Select, MenuItem, Button, Box, Card } from '@mui/material';
-
-const POSITIONS = ['Bartender', 'Runner', 'Server', 'Host'];
+import { POSITIONS } from '../../utils/constraints';
 
 function TeamMemberForm({ teamMemberName, setTeamMemberName, position, setPosition, addTeamMember }) {
 	const handleSubmit = (event) => {
@@ -33,7 +32,9 @@ function TeamMemberForm({ teamMemberName, setTeamMemberName, position, setPositi
 					sx={{ margin: 1 }}
 				/>
 				<FormControl fullWidth margin="normal" sx={{ margin: 1 }}>
-					<InputLabel id="position"></InputLabel>
+					<InputLabel id="position">
+						Position
+					</InputLabel>
 					<Select
 						labelId="position"
 						id="position"
@@ -44,7 +45,7 @@ function TeamMemberForm({ teamMemberName, setTeamMemberName, position, setPositi
 							Select a position
 						</MenuItem>
 						{POSITIONS.map((position) => (
-							<MenuItem key={position} value={position.toLowerCase()}>
+							<MenuItem key={position} value={position}>
 								{position}
 							</MenuItem>
 						))}
