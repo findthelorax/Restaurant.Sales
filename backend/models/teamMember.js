@@ -31,21 +31,27 @@ const WeeklyTotalSchema = new mongoose.Schema({
 });
 
 const TeamMemberSchema = new mongoose.Schema({
-	teamMemberName: String,
-	position: String,
-	timeZone: {
-		type: String,
-		default: 'UTC',
-	},
-	dailyTotals: [DailyTotalSchema],
-	weeklyTotals: [WeeklyTotalSchema],
+    teamMemberFirstName: String,
+    teamMemberLastName: String,
+    position: String,
+    timeZone: {
+        type: String,
+        default: 'UTC',
+    },
+    dailyTotals: [DailyTotalSchema],
+    weeklyTotals: [WeeklyTotalSchema],
 });
 
+TeamMemberSchema.index({ teamMemberFirstName: 1, teamMemberLastName: 1, position: 1 }, { unique: true });
+
 TeamMemberSchema.pre('save', function (next) {
-	if (this.teamMemberName && this.isModified('teamMemberName')) {
-		this.teamMemberName = this.teamMemberName.charAt(0).toUpperCase() + this.teamMemberName.slice(1);
-	}
-	next();
+    if (this.teamMemberFirstName && this.isModified('teamMemberFirstName')) {
+        this.teamMemberFirstName = this.teamMemberFirstName.charAt(0).toUpperCase() + this.teamMemberFirstName.slice(1);
+    }
+    if (this.teamMemberLastName && this.isModified('teamMemberLastName')) {
+        this.teamMemberLastName = this.teamMemberLastName.charAt(0).toUpperCase() + this.teamMemberLastName.slice(1);
+    }
+    next();
 });
 
 TeamMemberSchema.methods.addDailyTotal = function (dailyTotal) {

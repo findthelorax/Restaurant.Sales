@@ -1,4 +1,4 @@
-const { Team } = require('../models/database');
+const { TeamMember } = require('../models/database');
 const moment = require('moment');
 require('dotenv').config();
 
@@ -18,7 +18,7 @@ exports.getTeamMember = async (req, res) => {
 		});
 	}
 	try {
-		const teamMember = await Team.findById(teamMemberId);
+		const teamMember = await TeamMember.findById(teamMemberId);
 		if (!teamMember) {
 			return res.status(404).json({
 				success: false,
@@ -39,32 +39,38 @@ exports.getTeamMember = async (req, res) => {
 };
 
 exports.createTeamMember = async (req, res) => {
-	const { teamMemberName, position } = req.body;
+	const { teamMemberFirstName, teamMemberLastName, position } = req.body;
 
-	if (!teamMemberName || !position) {
-		return res.status(400).json({ error: 'Both name and position are required' });
+	if (!teamMemberFirstName || !teamMemberLastName || !position) {
+		return res.status(400).json({ error: 'Both first name, last name and position are required' });
 	}
 
-	const newMember = new Team({ teamMemberName, position });
+	const newMember = new TeamMember({ teamMemberFirstName, teamMemberLastName, position });
 
 	try {
 		const savedMember = await newMember.save();
 		res.status(201).json(savedMember);
-	} catch (err) {
-		res.status(400).json({ message: err.message });
-	}
+    } catch (error) {
+        if (error.code === 11000) {
+            res.status(400).json({
+                error: `A team member ${teamMemberFirstName} ${teamMemberLastName} - ${position} already exists.`
+            });
+        } else {
+            res.status(400).send({ message: err.message });
+        }
+    }
 };
 
 exports.updateTeamMember = async (req, res) => {
-	const { teamMemberName, position } = req.body;
+	const { teamMemberFirstName, teamMemberLastName, position } = req.body;
 	const teamMemberId = req.params.teamMemberId;
 
-	if (!teamMemberName || !position) {
-		return res.status(400).json({ error: 'Both name and position are required' });
+	if (!teamMemberFirstName || !teamMemberLastName || !position) {
+		return res.status(400).json({ error: 'Both first name, last name and position are required' });
 	}
 
 	try {
-		const updatedMember = await Team.findByIdAndUpdate(teamMemberId, { teamMemberName, position }, { new: true });
+		const updatedMember = await TeamMember.findByIdAndUpdate(teamMemberId, { teamMemberFirstName, teamMemberLastName, position }, { new: true });
 
 		if (!updatedMember) {
 			return res.status(404).json({ error: 'Team member not found' });
@@ -78,7 +84,7 @@ exports.updateTeamMember = async (req, res) => {
 
 exports.deleteTeamMember = async (req, res) => {
 	const teamMemberId = req.params.teamMemberId;
-	const teamMember = await Team.findById(teamMemberId);
+	const teamMember = await TeamMember.findById(teamMemberId);
 	if (!teamMember) {
 		return res.status(404).json({
 			success: false,
@@ -86,9 +92,9 @@ exports.deleteTeamMember = async (req, res) => {
 		});
 	}
 	try {
-		const deleted = await Team.findByIdAndDelete(teamMemberId);
+		const deleted = await TeamMember.findByIdAndDelete(teamMemberId);
 		if (!deleted) throw new Error('Deletion failed');
-		res.json({ message: `Team member ${teamMember.teamMemberName} (${teamMember.position}) was deleted` });
+		res.json({ message: `Team member ${teamMember.teamMemberFirstName} ${teamMember.teamMemberLastName} (${teamMember.position}) was deleted` });
 	} catch (error) {
 		console.error(`Error deleting team member ${teamMemberId}:`, error);
 		res.status(500).json({ error: 'Internal Server Error' });
@@ -98,7 +104,7 @@ exports.deleteTeamMember = async (req, res) => {
 // Get All Team Members
 exports.getTeamMembers = async (req, res) => {
 	try {
-		const teamMembers = await Team.find();
+		const teamMembers = await TeamMember.find();
 		res.json(teamMembers);
 	} catch (err) {
 		console.error(err);
@@ -109,7 +115,7 @@ exports.getTeamMembers = async (req, res) => {
 // Get All Daily Totals
 exports.getAllDailyTotals = async (req, res, next) => {
     try {
-        const teamMembers = await Team.find({});
+        const teamMembers = await TeamMember.find({});
         const dailyTotalsAll = teamMembers.flatMap(teamMember => teamMember.dailyTotals);
         res.json(dailyTotalsAll);
     } catch (error) {
@@ -121,7 +127,7 @@ exports.getAllDailyTotals = async (req, res, next) => {
 // Get All Weekly Totals
 exports.getAllWeeklyTotals = async (req, res, next) => {
     try {
-        const teamMembers = await Team.find({});
+        const teamMembers = await TeamMember.find({});
         const weeklyTotalsAll = teamMembers.flatMap(teamMember => teamMember.weeklyTotals);
         res.json(weeklyTotalsAll);
     } catch (error) {
@@ -134,7 +140,7 @@ exports.getAllWeeklyTotals = async (req, res, next) => {
 exports.getDailyTotals = async (req, res) => {
 	try {
 		const { teamMemberId } = req.params;
-		const teamMember = await Team.findById(teamMemberId);
+		const teamMember = await TeamMember.findById(teamMemberId);
 
 		if (!teamMember) {
 			return res.status(404).json({ error: 'Team member not found' });
@@ -161,7 +167,7 @@ exports.createDailyTotal = async (req, res) => {
 		}
 
 		// Check if a daily total for the same date and teamMember already exists
-		const existingEntry = await Team.findOne({
+		const existingEntry = await TeamMember.findOne({
 			_id: teamMemberId,
 			dailyTotals: { $elemMatch: { date: dailyTotal.date } },
 		});
@@ -174,7 +180,7 @@ exports.createDailyTotal = async (req, res) => {
 		}
 
 		// Find the team member
-		const teamMember = await Team.findById(teamMemberId);
+		const teamMember = await TeamMember.findById(teamMemberId);
 
 		// Update the team member's daily totals
 		teamMember.addDailyTotal(dailyTotal);
@@ -205,7 +211,7 @@ exports.deleteDailyTotal = async (req, res) => {
 		const { teamMemberId, dailyTotalId } = req.params;
 		console.log(`teamMemberId: ${teamMemberId}, dailyTotalId: ${dailyTotalId}`);
 
-		const teamMember = await Team.findById(teamMemberId);
+		const teamMember = await TeamMember.findById(teamMemberId);
 		console.log('teamMember:', teamMember);
 		if (!teamMember) {
 			return res.status(404).send({ message: 'Team member not found' });
@@ -249,7 +255,7 @@ exports.updateDailyTotal = async (req, res) => {
 			});
 		}
 
-		const teamMember = await Team.findById(teamMemberId);
+		const teamMember = await TeamMember.findById(teamMemberId);
 
 		if (!teamMember) {
 			return res.status(404).json({ message: 'Team member not found' });
@@ -291,7 +297,7 @@ exports.updateDailyTotal = async (req, res) => {
 exports.getOneTMWeeklyTotals = async (req, res) => {
 	try {
 		const { teamMemberId } = req.params;
-		const teamMember = await Team.findById(teamMemberId).select('weeklyTotals');
+		const teamMember = await TeamMember.findById(teamMemberId).select('weeklyTotals');
 
 		if (!teamMember) {
 			return res.status(404).json({ error: 'Team member not found' });
@@ -306,7 +312,7 @@ exports.getOneTMWeeklyTotals = async (req, res) => {
 // Route to get a specific team member's weekly totals for a specific week
 exports.getOneWeeklyTotals = async (req, res) => {
 	try {
-		const teamMember = await Team.findById(req.params.teamMemberId);
+		const teamMember = await TeamMember.findById(req.params.teamMemberId);
 
 		if (!teamMember) {
 			return res.status(404).json({ message: 'Team member not found' });
@@ -335,9 +341,9 @@ exports.createWeeklyTotals = async (req, res) => {
 		const weeklyTotalsData = { ...req.body, week };
 		console.log("🚀 ~ file: TeamMembersController.js:335 ~ exports.createWeeklyTotals= ~ weeklyTotalsData:", weeklyTotalsData)
 
-		await Team.updateOne({ _id: memberId }, { $push: { weeklyTotals: weeklyTotalsData } });
+		await TeamMember.updateOne({ _id: memberId }, { $push: { weeklyTotals: weeklyTotalsData } });
 
-		const teamMember = await Team.findById(memberId);
+		const teamMember = await TeamMember.findById(memberId);
 		res.json(teamMember.weeklyTotals);
 	} catch (error) {
 		console.error('Error adding weekly totals:', error);
@@ -350,7 +356,7 @@ exports.deleteWeeklyTotals = async (req, res) => {
 	try {
 		const memberId = req.params.teamMemberId;
 		const week = req.params.week;
-		const teamMember = await Team.findById(memberId);
+		const teamMember = await TeamMember.findById(memberId);
 
 		// Filter out the week to be deleted
 		// teamMember.weeklyTotals = teamMember.weeklyTotals.filter(total => total.week !== week);
@@ -367,7 +373,7 @@ exports.deleteWeeklyTotals = async (req, res) => {
 
 exports.updateWeeklyTotalsPut = async (req, res) => {
 	try {
-		const teamMember = await Team.findById(req.params.teamMemberId);
+		const teamMember = await TeamMember.findById(req.params.teamMemberId);
 
 		if (!teamMember) {
 			return res.status(404).json({ message: 'Team member not found' });
@@ -405,7 +411,7 @@ exports.updateWeeklyTotalsPatch = async (req, res) => {
 		console.log("🚀 ~ file: TeamMembersController.js:402 ~ exports.updateWeeklyTotalsPatch= ~ weekStart:", weekStart)
 
 		// Check for existing weekly total for the same week
-		const existingWeeklyTotal = await Team.findOne({
+		const existingWeeklyTotal = await TeamMember.findOne({
 			_id: req.params.teamMemberId,
 			'weeklyTotals.week': weekStart,
 		});
@@ -413,7 +419,7 @@ exports.updateWeeklyTotalsPatch = async (req, res) => {
 			return res.status(400).json({ message: 'Weekly total for this week already exists' });
 		}
 
-		const result = await Team.updateOne(
+		const result = await TeamMember.updateOne(
 			{ _id: req.params.teamMemberId, 'weeklyTotals.week': weekStart },
 			{
 				$set: {

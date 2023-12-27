@@ -7,6 +7,7 @@ const databaseRoutes = require('./routes/database');
 const loginRoutes = require('./routes/login');
 const userRoutes = require('./routes/users');
 const adminRoutes = require('./routes/admin');
+const teamRoutes = require('./routes/team');
 
 require('dotenv').config();
 
@@ -40,6 +41,7 @@ app.use('/admin', adminRoutes);
 app.use('/api', databaseRoutes);
 app.use('/users', userRoutes);
 app.use('/teamMembers', teamMembersRoutes);
+app.use(teamRoutes);
 
 app.use((err, req, res, next) => {
 	console.error(err.stack);
