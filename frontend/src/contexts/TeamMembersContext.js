@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { getTeamMembers } from '../utils/api';
+import { getTeamMembers } from '../api/teamMembers';
 
 export const TeamMembersContext = createContext();
 

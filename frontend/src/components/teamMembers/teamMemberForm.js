@@ -1,24 +1,28 @@
 import React, { useState, useContext, useCallback } from 'react';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
-import { addTeamMemberToTeam } from '../../hooks/teamMembersLogic';
+import { addTeamMemberToTeam } from '../../handlers/teamMembersConfirmations';
 import TeamMemberFormRender from './teamMembersFormRender';
 
 function TeamMemberForm() {
     const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
-    const [teamMemberName, setTeamMemberName] = useState('');
-    const [position, setPosition] = useState('Bartender');
+    const [teamMemberFirstName, setTeamMemberFirstName] = useState('');
+    const [teamMemberLastName, setTeamMemberLastName] = useState('');
+    const [position, setPosition] = useState();
 
     const clearInputs = () => {
-        setTeamMemberName('');
-        setPosition('Server');
+        setTeamMemberFirstName('');
+        setTeamMemberLastName('');
+        setPosition('');
     };
     
-    const addTeamMember = addTeamMemberToTeam(teamMemberName, position, teamMembers, setTeamMembers, clearInputs);
+    const addTeamMember = addTeamMemberToTeam(teamMemberFirstName, teamMemberLastName, position, teamMembers, setTeamMembers, clearInputs);
 
     return (
         <TeamMemberFormRender
-            teamMemberName={teamMemberName}
-            setTeamMemberName={setTeamMemberName}
+            teamMemberFirstName={teamMemberFirstName}
+            setTeamMemberFirstName={setTeamMemberFirstName}
+            teamMemberLastName={teamMemberLastName}
+            setTeamMemberLastName={setTeamMemberLastName}
             position={position}
             setPosition={setPosition}
             addTeamMember={addTeamMember}

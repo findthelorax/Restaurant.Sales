@@ -1,47 +1,48 @@
-import React from 'react';
-import { TextField, FormControl, InputLabel, Select, MenuItem, Button, Box, Card } from '@mui/material';
+import React, { useState } from 'react';
+import { InputLabel, Select, MenuItem } from '@mui/material';
 import { POSITIONS } from '../../utils/constraints';
+import { StyledCard, StyledBox, StyledTextField, StyledFormControl, StyledButton } from '../../styles/teamMemberFormStyles';
 
-function TeamMemberForm({ teamMemberName, setTeamMemberName, position, setPosition, addTeamMember }) {
+function TeamMemberForm({ teamMemberFirstName, setTeamMemberFirstName, teamMemberLastName, setTeamMemberLastName, position = '', setPosition, addTeamMember }) {
+	const [open, setOpen] = useState(false);
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		addTeamMember();
 	};
 
 	return (
-		<Card>
-			<Box
-				component="form"
-				onSubmit={handleSubmit}
-				sx={{
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center',
-					padding: 2,
-					boxShadow: '2px 2px 0px 0px black',
-				}}
-			>
-				<TextField
-					id="teamMemberName"
-					label="Name"
-					placeholder="Enter name"
-					value={teamMemberName}
-					onChange={(e) => setTeamMemberName(e.target.value)}
+		<StyledCard>
+			<StyledBox component="form" onSubmit={handleSubmit}>
+				<StyledTextField
+					id="teamMemberFirstName"
+					label="First Name"
+					placeholder="Enter first name"
+					value={teamMemberFirstName}
+					onChange={(e) => setTeamMemberFirstName(e.target.value)}
 					fullWidth
 					margin="normal"
-					sx={{ margin: 1 }}
 				/>
-				<FormControl fullWidth margin="normal" sx={{ margin: 1 }}>
-					<InputLabel id="position">
-						Position
-					</InputLabel>
+				<StyledTextField
+					id="teamMemberLastName"
+					label="Last Name"
+					placeholder="Enter last name"
+					value={teamMemberLastName}
+					onChange={(e) => setTeamMemberLastName(e.target.value)}
+					fullWidth
+					margin="normal"
+				/>
+				<StyledFormControl fullWidth margin="normal">
+				<InputLabel id="position">Position</InputLabel>
 					<Select
 						labelId="position"
 						id="position"
 						value={position}
+						label="Position"
 						onChange={(e) => setPosition(e.target.value)}
+						onOpen={() => setOpen(true)}
+						onClose={() => setOpen(false)}
 					>
-						<MenuItem value="" disabled>
+						<MenuItem value='' disabled>
 							Select a position
 						</MenuItem>
 						{POSITIONS.map((position) => (
@@ -50,14 +51,12 @@ function TeamMemberForm({ teamMemberName, setTeamMemberName, position, setPositi
 							</MenuItem>
 						))}
 					</Select>
-				</FormControl>
-				<Box mt={2}>
-					<Button variant="contained" color="primary" type="submit">
-						Add to Team
-					</Button>
-				</Box>
-			</Box>
-		</Card>
+				</StyledFormControl>
+				<StyledButton variant="contained" color="primary" type="submit">
+					Add Team Member
+				</StyledButton>
+			</StyledBox>
+		</StyledCard>
 	);
 }
 

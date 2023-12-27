@@ -1,13 +1,12 @@
-import React, { useEffect, useContext, useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
-import { getTeamMembers } from '../../utils/api';
-import { deleteTeamMemberFromTeam } from '../../hooks/teamMembersLogic';
+import { deleteTeamMemberFromTeam } from '../../handlers/teamMembersConfirmations';
 import TeamMembersListRender from './teamMembersListRender';
 import { POSITIONS } from '../../utils/constraints';
 
 function TeamMembersList() {
 	const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
-	const deleteMember = deleteTeamMemberFromTeam(setTeamMembers);
+	const deleteTeamMember = deleteTeamMemberFromTeam(setTeamMembers);
 
 	const teamByPosition = useMemo(() => {
 		const teamByPosition = POSITIONS.reduce((acc, position) => {
@@ -25,23 +24,29 @@ function TeamMembersList() {
 			}
 		});
 
-		return Object.fromEntries(
-			Object.entries(teamByPosition).map(([position, members]) => [
-				position,
-				[...members].sort((a, b) => {
-					// Check if teamMemberName exists before comparing
-					if (a.teamMemberName && b.teamMemberName) {
-						return a.teamMemberName.localeCompare(b.teamMemberName);
-					} else {
-						// If teamMemberName doesn't exist, don't compare
-						return 0;
-					}
-				}),
-			])
-		);
-	}, [teamMembers]);
+        return Object.fromEntries(
+            Object.entries(teamByPosition).map(([position, members]) => [
+                position,
+                [...members].sort((a, b) => {
+                    // Check if teamMemberFirstName and teamMemberLastName exist before comparing
+                    if (a.teamMemberFirstName && b.teamMemberFirstName && a.teamMemberLastName && b.teamMemberLastName) {
+                        // Compare by first name, then by last name
+                        const firstNameComparison = a.teamMemberFirstName.localeCompare(b.teamMemberFirstName);
+                        if (firstNameComparison !== 0) {
+                            return firstNameComparison;
+                        } else {
+                            return a.teamMemberLastName.localeCompare(b.teamMemberLastName);
+                        }
+                    } else {
+                        // If teamMemberFirstName or teamMemberLastName doesn't exist, don't compare
+                        return 0;
+                    }
+                }),
+            ])
+        );
+    }, [teamMembers]);
 
-	return <TeamMembersListRender teamByPosition={teamByPosition} deleteMember={deleteMember} />;
+	return <TeamMembersListRender teamByPosition={teamByPosition} deleteTeamMember={deleteTeamMember} />;
 }
 
 export default TeamMembersList;

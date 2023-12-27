@@ -21,8 +21,10 @@ const POSITIONS = ['bartender', 'host', 'server', 'runner'];
 const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
 const TeamMembersPageRender = ({
-    teamMemberName,
-    setTeamMemberName,
+    teamMemberFirstName,
+    teamMembeLastName,
+    setTeamMemberFirstName,
+    setTeamMemberLastName,
     position,
     setPosition,
     addMember,
@@ -32,12 +34,14 @@ const TeamMembersPageRender = ({
     columns,
 }) => {
     return (
-        <Box sx={{ flexGrow: 1, maxWidth: 752 }}>
+        <Box sx={{ maxWidth: 300 }}>
             <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={4} md={4} lg={4}>
                     <TeamMemberForm
-                        teamMemberName={teamMemberName}
-                        setTeamMemberName={setTeamMemberName}
+                        teamMemberFirstName={teamMemberFirstName}
+                        setTeamMemberFirstName={setTeamMemberFirstName}
+                        teamMembeLastName={teamMembeLastName}
+                        setTeamMemberLastName={setTeamMemberLastName}
                         position={position}
                         setPosition={setPosition}
                         addTeamMember={addMember}
