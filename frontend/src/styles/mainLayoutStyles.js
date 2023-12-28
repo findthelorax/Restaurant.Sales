@@ -9,6 +9,7 @@ import {
 	FormControl,
 	Box,
 	Card,
+	CardContent,
 } from '@mui/material';
 import { styled } from '@mui/system';
 
@@ -50,10 +51,11 @@ export const StyledSalesAvatar = styled(Avatar)({
 });
 
 export const StyledSalesCard = styled(Card)({
+	height: '80%',
+	width: '80%',
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
-	padding: 10,
 	border: '2px solid black',
 	boxShadow: `10px 10px 0px 0px ${getRandomColor()}`,
 	borderRadius: '15px',

@@ -51,13 +51,13 @@ function Dashboard({ selectedDate }) {
 	];
 
 	return (
-		<Grid container rowSpacing={3} columnSpacing={2.5}>
+		<Grid container rowSpacing={3} columnSpacing={3}>
 			{/* row 1 */}
-			<Grid item xs={12} sm={6} md={4} lg={3}>
+			<Grid item xs={12} sm={6} md={3} lg={3}>
 				<WeeklyFoodSalesCard selectedDate={selectedDate} />
 				{/* <WeeklyFoodSalesCard selectedDate={selectedDate} weeklyDifferences={weeklyDifferences} /> */}
 			</Grid>
-			<Grid item xs={12} sm={6} md={4} lg={3}>
+			<Grid item xs={12} sm={6} md={3} lg={3}>
 				<WeeklyBarSalesCard selectedDate={selectedDate} />
 			</Grid>
 			<Grid item xs={12} sm={6} md={3} lg={3}>

@@ -6,7 +6,7 @@ import { CiBeerMugFull } from 'react-icons/ci';
 import { GiHamburger } from 'react-icons/gi';
 import { success, error } from '../../theme/colors';
 import { Avatar, Card, CardContent, Stack, SvgIcon, Typography, CircularProgress } from '@mui/material';
-
+import { StyledSalesCard, StyledSalesAvatar } from '../../styles/mainLayoutStyles';
 export function DailyFoodSalesCardRender({
 	selectedDate,
 	totalFoodSales,
@@ -30,7 +30,7 @@ export function DailyFoodSalesCardRender({
 	const formattedDate = moment(selectedDate).format('MM/DD');
 
 	return (
-		<Card sx={{ ...sx, width: '300px', backgroundColor: 'background.paper' }}>
+		<StyledSalesCard>
 			<CardContent>
 				<Stack alignItems="flex-start" direction="row" justifyContent="space-between" spacing={3}>
 					<Stack spacing={1}>
@@ -39,11 +39,11 @@ export function DailyFoodSalesCardRender({
 						</Typography>
 						<Typography variant="h5">{formattedTotalFoodSales}</Typography>
 					</Stack>
-					<Avatar sx={{ ...sx, height: 56, width: 56 }}>
+					<StyledSalesAvatar>
 						<SvgIcon fontSize="medium">
 							<GiHamburger />
 						</SvgIcon>
-					</Avatar>
+					</StyledSalesAvatar>
 				</Stack>
 				{formattedDifference && (
 					<Stack alignItems="center" direction="row" spacing={2} sx={{ mt: 2 }}>
@@ -64,7 +64,7 @@ export function DailyFoodSalesCardRender({
 					</Stack>
 				)}
 			</CardContent>
-		</Card>
+		</StyledSalesCard>
 	);
 }
 
@@ -99,7 +99,7 @@ export function DailyBarSalesCardRender({
 	const formattedDate = moment(selectedDate).format('MM/DD');
 
 	return (
-		<Card sx={{ ...sx, width: '300px', backgroundColor: 'background.paper' }}>
+		<StyledSalesCard>
 			<CardContent>
 				<Stack alignItems="flex-start" direction="row" justifyContent="space-between" spacing={3}>
 					<Stack spacing={1}>
@@ -108,11 +108,11 @@ export function DailyBarSalesCardRender({
 						</Typography>
 						<Typography variant="h5">{formattedTotalBarSales}</Typography>
 					</Stack>
-					<Avatar sx={{ ...sx, height: 56, width: 56 }}>
+					<StyledSalesAvatar>
 						<SvgIcon fontSize="medium">
 							<CiBeerMugFull />
 						</SvgIcon>
-					</Avatar>
+					</StyledSalesAvatar>
 				</Stack>
 				{formattedDifference && (
 					<Stack alignItems="center" direction="row" spacing={2} sx={{ mt: 2 }}>
@@ -133,7 +133,7 @@ export function DailyBarSalesCardRender({
 					</Stack>
 				)}
 			</CardContent>
-		</Card>
+		</StyledSalesCard>
 	);
 }
 

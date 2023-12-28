@@ -2,7 +2,6 @@ import React from 'react';
 import { Toolbar, IconButton, Badge, Avatar, Divider, Box } from '@mui/material';
 import { Notifications as NotificationsIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import moment from 'moment';
 import { darkTheme } from '../../../styles/darkTheme';
 import { ThemeProvider } from '@mui/material/styles';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
