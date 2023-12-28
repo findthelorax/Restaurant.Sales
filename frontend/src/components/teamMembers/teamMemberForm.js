@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
-import { addTeamMemberToTeam } from '../../handlers/teamMembersConfirmations';
+import { useAddTeamMemberToTeam } from '../../handlers/teamMembersConfirmations';
 import TeamMemberFormRender from './teamMembersFormRender';
 
 function TeamMemberForm() {
@@ -15,7 +15,7 @@ function TeamMemberForm() {
         setPosition('');
     };
     
-    const addTeamMember = addTeamMemberToTeam(teamMemberFirstName, teamMemberLastName, position, teamMembers, setTeamMembers, clearInputs);
+    const addTeamMember = useAddTeamMemberToTeam(teamMemberFirstName, teamMemberLastName, position, teamMembers, setTeamMembers, clearInputs);
 
     return (
         <TeamMemberFormRender

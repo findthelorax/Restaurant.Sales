@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { deleteTeamMemberFromTeam } from '../handlers/teamMembersConfirmations';
+import { useDeleteTeamMemberFromTeam } from '../handlers/teamMembersConfirmations';
 
 export function AgGridSearch({ api }) {
 	const onSearchChange = (event) => {
@@ -42,18 +42,17 @@ function ErrorModal({ message, onClose }) {
 
 export const DeleteTMButtonRender = (props) => {
     const [error, setError] = useState(null);
+    const setTeamMembers = () => {};
+    const deleteFunc = useDeleteTeamMemberFromTeam(setTeamMembers);
 
     const onButtonClick = async () => {
         // Delete team member
         try {
-            const setTeamMembers = () => {};
-            const deleteFunc = deleteTeamMemberFromTeam(setTeamMembers);
             await deleteFunc(props.data.id, props.data.teamMemberFirstName, props.data.teamMemberLastName, props.data.position);
             // Refresh the grid after deletion
             props.api.applyTransaction({ remove: [props.data] });
         } catch (error) {
             setError(`Error deleting team member: ${error.message}`);
-            console.error(`Error deleting team member: ${error.message}`, error);
         }
     };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Toolbar, IconButton, Badge, Avatar, Divider, Box, Button } from '@mui/material';
+import { Toolbar, IconButton, Badge, Avatar, Divider, Box } from '@mui/material';
 import { Notifications as NotificationsIcon, Settings as SettingsIcon } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
@@ -50,14 +50,7 @@ function ButtonDatePicker(props) {
 	);
 }
 
-function SearchAppBar() {
-	const [selectedDate, setSelectedDate] = React.useState(moment());
-
-	const handleDateChange = (date) => {
-		setSelectedDate(moment(date));
-		// Here you can dispatch an action or call a function to update the infographics in the dashboard
-	};
-
+function SearchAppBar({ selectedDate, handleDateChange }) {
 	return (
 		<StyledAppBar>
 			<Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>

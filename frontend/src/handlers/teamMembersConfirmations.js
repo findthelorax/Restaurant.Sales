@@ -1,6 +1,10 @@
+import { useContext } from 'react';
 import { addTeamMember, deleteTeamMember } from '../api/teamMembers';
+import { ErrorContext } from '../contexts/ErrorContext';
 
-export const addTeamMemberToTeam = (teamMemberFirstName, teamMemberLastName, position, teamMembers, setTeamMembers, clearInputs) => {
+export const useAddTeamMemberToTeam = (teamMemberFirstName, teamMemberLastName, position, teamMembers, setTeamMembers, clearInputs) => {
+	const { showError } = useContext(ErrorContext);
+
 	return async () => {
 		if (teamMemberFirstName && teamMemberLastName && position) {
 			try {
@@ -10,23 +14,24 @@ export const addTeamMemberToTeam = (teamMemberFirstName, teamMemberLastName, pos
 					member.position.toLowerCase() === position.toLowerCase()
 				);
 				if (duplicate) {
-					alert('A member with this name and position already exists.');
+					showError('A member with this name and position already exists.');
 					return;
 				}
 				const newMember = await addTeamMember(teamMemberFirstName, teamMemberLastName, position);
 				setTeamMembers((prevTeamMembers) => [...prevTeamMembers, newMember]);
 				clearInputs();
 			} catch (error) {
-				console.error('Error adding team member:', error);
-				alert('Failed to add team member');
+				showError(`Failed to add team member: ${error.message}`);
 			}
 		} else {
-			alert('Please enter both name and position');
+			showError(`Please enter both name and position.`);
 		}
 	};
 };
 
-export const deleteTeamMemberFromTeam = (setTeamMembers) => {
+export const useDeleteTeamMemberFromTeam = (setTeamMembers) => {
+	const { showError } = useContext(ErrorContext);
+
 	return async (id, teamMemberFirstName, teamMemberLastName, position) => {
 		const confirmation = window.confirm(
 			`ARE YOU SURE YOU WANT TO DELETE:\n\n${
@@ -41,8 +46,7 @@ export const deleteTeamMemberFromTeam = (setTeamMembers) => {
 			await deleteTeamMember(id);
 			setTeamMembers((prevTeamMembers) => prevTeamMembers.filter((member) => member._id !== id));
 		} catch (error) {
-			console.error('Error deleting team member:', error);
-			alert('Failed to delete team member');
+			showError(`Failed to delete team member: ${error.message}`);
 		}
 	};
 };

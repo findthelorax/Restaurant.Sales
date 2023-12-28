@@ -14,12 +14,12 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FolderIcon from '@mui/icons-material/Folder';
-import TeamMemberForm from './teamMembersFormRender';
-
-const POSITIONS = ['bartender', 'host', 'server', 'runner'];
+import TeamMemberForm from '../../components/teamMembers/teamMembersFormRender';
+import { POSITIONS } from '../../utils/constraints';
+import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 
 const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
-
+//! FIX TO USE TEAM MEMBERS CONTEXT
 const TeamMembersPageRender = ({
     teamMemberFirstName,
     teamMembeLastName,
@@ -33,6 +33,7 @@ const TeamMembersPageRender = ({
     teamMembers,
     columns,
 }) => {
+    const { teamMembers } = useContext(TeamMembersContext);
     return (
         <Box sx={{ maxWidth: 300 }}>
             <Grid container spacing={2}>
@@ -68,7 +69,7 @@ const TeamMembersPageRender = ({
                                                     edge="end"
                                                     aria-label="delete"
                                                     onClick={() =>
-                                                        deleteMember(member._id, member.teamMemberName, member.position)
+                                                        deleteMember(member._id, member.teamMemberFirstName, member.teamMemberLastName, member.position)
                                                     }
                                                 >
                                                     <DeleteIcon />

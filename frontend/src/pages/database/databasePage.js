@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { ErrorContext } from '../../contexts/ErrorContext';
-import { TeamContext } from '../../contexts/TeamContext';
-import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
-import { getDatabases, deleteDatabase } from '../../utils/api';
+import { TeamMembersContext } from '../../contexts/TeamMembersContext';
+// import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
+import { getDatabases, deleteDatabase } from '../../api/database';
 import DatabaseOperationsRender from '../../components/database/databaseRender';
 
 
 function DatabasePage() {
 	const [databases, setDatabases] = useState([]);
-	const { error, setError } = useContext(ErrorContext);
-	const { setRefreshTeamMembers } = useContext(TeamContext);
-	const { setRefreshDailyTotals } = useContext(DailyTotalsContext);
+	const { error, showError } = useContext(ErrorContext);
+	const { setRefreshTeamMembers } = useContext(TeamMembersContext);
+	// const { setRefreshDailyTotals } = useContext(DailyTotalsContext);
 	const [isShown, setIsShown] = useState(false);
 
 	const fetchDatabases = useCallback(async () => {
@@ -18,9 +18,9 @@ function DatabasePage() {
 			const response = await getDatabases();
 			setDatabases(response);
 		} catch (error) {
-			setError(error.message);
+			showError(error.message);
 		}
-	}, [setError]);
+	}, [showError]);
 
 	useEffect(() => {
 		fetchDatabases();
@@ -35,10 +35,10 @@ function DatabasePage() {
 		try {
 			await deleteDatabase(databaseName);
 			setDatabases((prevDatabases) => prevDatabases.filter((database) => database.name !== databaseName));
-			setRefreshDailyTotals((prev) => !prev);
+			// setRefreshDailyTotals((prev) => !prev);
 			setRefreshTeamMembers((prev) => !prev);
 		} catch (error) {
-			setError(error.message);
+			showError(error.message);
 		}
 	};
 

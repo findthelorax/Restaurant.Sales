@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
+import moment from 'moment';
 import { Box } from '@mui/material';
 import SearchAppBar from './dashboard/appBar/appBar';
 import { PermanentDrawerLeft } from './dashboard/drawer/Drawer';
 import Dashboard from './Dashboard';
-// import TeamMembersPage from '../teamMembers/TeamMembersPage';
 import SettingsPage from './Settings';
-// import DatabasePage from '../database/databasePage';
-import moment from 'moment';
+import DatabasePage from '../pages/database/databasePage';
+// import TeamMembersPage from '../pages/teamMembers/teamMembersPage';
 // import { Outlet } from 'react-router-dom';
 // import { useAuth } from '../../contexts/AuthContext';
 
 function MainLayout() {
-	const [selectedDate, setSelectedDate] = useState(moment());
+	// const [selectedDate, setSelectedDate] = useState(moment());
 	// const { currentUser } = useAuth();
 
 	const [isDrawerOpen, setIsDrawerOpen] = useState(true);
@@ -21,14 +21,21 @@ function MainLayout() {
 
 	const [selectedMenu, setSelectedMenu] = useState('Dashboard');
 
+	const [selectedDate, setSelectedDate] = useState(moment());
+
+	const handleDateChange = (date) => {
+		setSelectedDate(moment(date));
+		// Here you can dispatch an action or call a function to update the infographics in the dashboard
+	};
+
 	const renderSelectedComponent = () => {
 		switch (selectedMenu) {
 			case 'Dashboard':
-				return <Dashboard />;
+				return <Dashboard selectedDate={selectedDate} handleDateChange={handleDateChange}/>;
 			// case 'Team Members':
 			// 	return <TeamMembersPage />;
-			// case 'Database':
-			// 	return <DatabasePage />;
+			case 'Database':
+				return <DatabasePage />;
 			case 'Settings':
 				return <SettingsPage />;
 			default:
@@ -49,7 +56,7 @@ function MainLayout() {
 					flexGrow: 1,
 				}}
 			>
-				<SearchAppBar open={isDrawerOpen} handleDrawerToggle={handleDrawerToggle} />
+				<SearchAppBar open={isDrawerOpen} handleDrawerToggle={handleDrawerToggle} selectedDate={selectedDate} handleDateChange={handleDateChange} />
 				<Box component="main" sx={{ p: { xs: 2, sm: 3 } }}>
 					{/* <Toolbar /> */}
 					{renderSelectedComponent()}

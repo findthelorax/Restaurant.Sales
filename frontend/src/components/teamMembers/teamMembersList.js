@@ -1,12 +1,12 @@
 import React, { useContext, useMemo } from 'react';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
-import { deleteTeamMemberFromTeam } from '../../handlers/teamMembersConfirmations';
+import { useDeleteTeamMemberFromTeam } from '../../handlers/teamMembersConfirmations';
 import TeamMembersListRender from './teamMembersListRender';
 import { POSITIONS } from '../../utils/constraints';
 
 function TeamMembersList() {
 	const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
-	const deleteTeamMember = deleteTeamMemberFromTeam(setTeamMembers);
+	const deleteTeamMember = useDeleteTeamMemberFromTeam(setTeamMembers);
 
 	const teamByPosition = useMemo(() => {
 		const teamByPosition = POSITIONS.reduce((acc, position) => {
