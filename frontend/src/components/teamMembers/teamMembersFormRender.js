@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { InputLabel, Select, MenuItem } from '@mui/material';
 import { POSITIONS } from '../../utils/constraints';
 import {
-	StyledCard,
+	StyledTMCard,
 	StyledBox,
 	StyledTextField,
 	StyledFormControl,
@@ -25,10 +25,9 @@ function TeamMemberForm({
 	const { teams, setTeams } = useContext(TeamContext);
 	const [selectedTeam, setSelectedTeam] = useState('');
 
-
 	const handleSubmit = (event) => {
 		event.preventDefault();
-	
+
 		// Create a new team member object
 		const newTeamMember = {
 			firstName: teamMemberFirstName,
@@ -36,10 +35,10 @@ function TeamMemberForm({
 			position: position,
 			teamId: selectedTeam, // Set the team id to selectedTeam
 		};
-	
+
 		// Call addTeamMember with the new team member object
 		addTeamMember(newTeamMember);
-	
+
 		// Clear the form fields
 		setTeamMemberFirstName('');
 		setTeamMemberLastName('');
@@ -48,7 +47,7 @@ function TeamMemberForm({
 	};
 
 	return (
-		<StyledCard>
+		<StyledTMCard>
 			<StyledBox component="form" onSubmit={handleSubmit}>
 				<StyledTextField
 					id="teamMemberFirstName"
@@ -58,6 +57,7 @@ function TeamMemberForm({
 					onChange={(e) => setTeamMemberFirstName(e.target.value)}
 					fullWidth
 					margin="normal"
+					// size="small"
 				/>
 				<StyledTextField
 					id="teamMemberLastName"
@@ -67,6 +67,7 @@ function TeamMemberForm({
 					onChange={(e) => setTeamMemberLastName(e.target.value)}
 					fullWidth
 					margin="normal"
+					// size="small"
 				/>
 				<StyledFormControl fullWidth margin="normal">
 					<InputLabel id="position">Position</InputLabel>
@@ -75,6 +76,7 @@ function TeamMemberForm({
 						id="position"
 						value={position}
 						label="Position"
+						// size="small"
 						onChange={(e) => setPosition(e.target.value)}
 						onOpen={() => setOpen(true)}
 						onClose={() => setOpen(false)}
@@ -96,6 +98,7 @@ function TeamMemberForm({
 						id="teams"
 						value={selectedTeam}
 						label="Team"
+						// size="small"
 						onChange={(e) => setSelectedTeam(e.target.value)}
 					>
 						<MenuItem value="" disabled>
@@ -113,7 +116,7 @@ function TeamMemberForm({
 					Add Team Member
 				</PinkStyledButton>
 			</StyledBox>
-		</StyledCard>
+		</StyledTMCard>
 	);
 }
 

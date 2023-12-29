@@ -7,7 +7,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
+import { motion } from 'framer-motion';
 import { StyledAppBar, PinkStyledButton } from '../../../styles/mainLayoutStyles';
 
 function ButtonField(props) {
@@ -22,12 +22,19 @@ function ButtonField(props) {
 
 	return (
 		<PinkStyledButton
+			as={motion.div}
 			variant="outlined"
 			id={id}
 			disabled={disabled}
 			ref={ref}
 			aria-label={ariaLabel}
 			onClick={() => setOpen?.((prev) => !prev)}
+			// whileHover={{ scale: 1.2, rotate: 360 }}
+			// whileTap={{
+			// 	scale: 0.8,
+			// 	rotate: -360,
+			// 	borderRadius: '100%',
+			// }}
 		>
 			{label ? `Date: ${label}` : 'Pick a date'}
 		</PinkStyledButton>

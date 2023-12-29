@@ -152,6 +152,32 @@ exports.getDailyTotals = async (req, res) => {
 	}
 };
 
+exports.getDailyTotal = async (req, res) => {
+	try {
+		const { teamMemberId, dailyTotalId } = req.params;
+		console.log(`teamMemberId: ${teamMemberId}, dailyTotalId: ${dailyTotalId}`);
+
+		const teamMember = await TeamMember.findById(teamMemberId);
+		console.log('teamMember:', teamMember);
+		if (!teamMember) {
+			return res.status(404).send({ message: 'Team member not found' });
+		}
+
+		const dailyTotalIndex = teamMember.dailyTotals.findIndex(
+			(dailyTotal) => dailyTotal._id.toString() === dailyTotalId
+		);
+		if (dailyTotalIndex === -1) {
+			return res.status(404).send({ message: 'Daily total not found' });
+		}
+
+		const dailyTotal = teamMember.dailyTotals[dailyTotalIndex];
+		res.json(dailyTotal);
+	} catch (error) {
+		console.error('Error getting daily total:', error);
+		res.status(500).json({ error: error.message });
+	}
+};
+
 // Create daily totals for a specific team member
 exports.createDailyTotal = async (req, res) => {
 	try {

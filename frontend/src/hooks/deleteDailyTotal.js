@@ -1,11 +1,9 @@
 import { useCallback, useContext } from 'react';
-import { ErrorContext } from '../contexts/ErrorContext';
 import { TeamMembersContext } from '../contexts/TeamMembersContext'; // import TeamContext
 import { deleteDailyTotalFromServer } from '../api/salesTotals';
 import { FormattedDate } from '../hooks/formatDate';
 
 export const useDeleteDailyTotal = (fetchAllDailyTotals, setRefreshDailyTotals) => {
-    const { showError } = useContext(ErrorContext);
     const { teamMembers, setTeamMembers } = useContext(TeamMembersContext); // use setTeam from TeamContext
 
     return useCallback(
@@ -21,7 +19,8 @@ export const useDeleteDailyTotal = (fetchAllDailyTotals, setRefreshDailyTotals) 
 
             try {
                 if (!teamMember._id || !dailyTotal._id) {
-                    showError(`Failed to delete daily total.`);
+                    console.log('Failed to delete daily total.'); // log error to console
+                    alert('Failed to delete daily total.'); // show error to user
                     return;
                 }
 
@@ -39,9 +38,10 @@ export const useDeleteDailyTotal = (fetchAllDailyTotals, setRefreshDailyTotals) 
                     fetchAllDailyTotals();
                 }
             } catch (error) {
-                showError(`Error deleting daily total: ${error.message}`);
+                console.log(`Error deleting daily total: ${error.message}`); // log error to console
+                alert(`Error deleting daily total: ${error.message}`); // show error to user
             }
         },
-        [showError, fetchAllDailyTotals, setRefreshDailyTotals, teamMembers, setTeamMembers]
+        [fetchAllDailyTotals, setRefreshDailyTotals, teamMembers, setTeamMembers]
     );
 };

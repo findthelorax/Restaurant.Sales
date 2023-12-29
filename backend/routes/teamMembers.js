@@ -13,6 +13,7 @@ router.delete('/:teamMemberId', TeamMembersController.deleteTeamMember);
 router.get('/', TeamMembersController.getTeamMembers);
 
 router.get('/:teamMemberId/dailyTotals', TeamMembersController.getDailyTotals);
+router.get('/:teamMemberId/dailyTotals/:dailyTotalId', TeamMembersController.getDailyTotal);
 router.post('/:teamMemberId/dailyTotals', TeamMembersController.createDailyTotal);
 router.delete('/:teamMemberId/dailyTotals/:dailyTotalId', TeamMembersController.deleteDailyTotal);
 

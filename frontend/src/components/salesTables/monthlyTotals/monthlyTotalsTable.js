@@ -6,44 +6,39 @@ import { titleToPropName, titles, formatUSD } from '../../../hooks/salesTotalsLo
 
 function MonthlyTotalsTable({ selectedDate }) {
     const { teamMembers } = useContext(TeamMembersContext);
-    const date = moment(selectedDate);
+    const year = moment(selectedDate).year();
 
-    const daysOfMonth = Array.from({ length: date.daysInMonth() }, (_, i) => i + 1);
+    const monthsOfYear = Array.from({ length: 12 }, (_, i) => i + 1);
 
     const monthlyTotals = useMemo(() => {
-        const totals = Array(daysOfMonth.length)
-            .fill(0)
-            .map(() => {
-                const dayTotal = {};
-                Object.values(titleToPropName).forEach((propName) => {
-                    dayTotal[propName] = 0;
-                });
-                return dayTotal;
+        const totals = Array(12).fill(0).map(() => {
+            const monthTotal = {};
+            Object.values(titleToPropName).forEach((propName) => {
+                monthTotal[propName] = 0;
             });
+            return monthTotal;
+        });
 
-            teamMembers.forEach((member) => {
+        teamMembers.forEach((member) => {
             member.dailyTotals.forEach((total) => {
                 const totalDate = moment(total.date);
-                const selectedMonthStart = moment(selectedDate).startOf('month');
-                const selectedMonthEnd = moment(selectedMonthStart).endOf('month');
-
-                if (totalDate.isSameOrAfter(selectedMonthStart) && totalDate.isSameOrBefore(selectedMonthEnd)) {
-                    const dayOfMonth = totalDate.date() - 1;
+                if (totalDate.year() === year) {
+                    const monthOfYear = totalDate.month();
                     Object.keys(titleToPropName).forEach((key) => {
-                        totals[dayOfMonth][titleToPropName[key]] += total[titleToPropName[key]] || 0;
+                        totals[monthOfYear][titleToPropName[key]] += total[titleToPropName[key]] || 0;
                     });
                 }
             });
         });
 
         return totals;
-    }, [teamMembers, selectedDate]);
+    }, [teamMembers, year]);
 
     const columns = [
         { field: 'salesTips', headerName: 'Sales / Tips', width: 130 },
-        ...daysOfMonth.map((day, index) => {
-            const date = moment(selectedDate).startOf('month').add(index, 'days').format('MM/DD');
-            return { field: `day${day}`, headerName: `${date}`, width: 110 };
+        ...monthsOfYear.map((month) => {
+            const monthName = moment().month(month - 1).format('MMMM');
+            return { field: `month${month}`, headerName: `${monthName}`, width: 110 };
         }),
         { field: 'total', headerName: 'Total', width: 100 },
     ];
@@ -51,7 +46,7 @@ function MonthlyTotalsTable({ selectedDate }) {
     const rows = titles.map((title, i) => {
         const row = { id: i, salesTips: title };
         monthlyTotals.forEach((total, index) => {
-            row[`day${index + 1}`] = formatUSD(total[titleToPropName[title]]);
+            row[`month${index + 1}`] = formatUSD(total[titleToPropName[title]]);
         });
         row.total = formatUSD(monthlyTotals.reduce((sum, total) => sum + total[titleToPropName[title]], 0));
         return row;

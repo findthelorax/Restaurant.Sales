@@ -1,6 +1,31 @@
 import axios from 'axios';
 
 //* Daily Totals
+export const getOneDailyTotal = async (teamMemberId, dailyTotalId) => {
+	try {
+		const response = await axios.get(
+			`${process.env.REACT_APP_SERVER_URL}/teamMembers/${teamMemberId}/dailyTotals/${dailyTotalId}`
+		);
+		return response.data;
+	} catch (error) {
+		console.error(`Error getting one daily total: ${error.message}`);
+		throw error;
+	}
+};
+
+export const updateDailyTotal = async (teamMemberId, dailyTotalId, updatedDailyTotal) => {
+	try {
+		const response = await axios.patch(
+			`${process.env.REACT_APP_SERVER_URL}/teamMembers/${teamMemberId}/dailyTotals/${dailyTotalId}`,
+			updatedDailyTotal
+		);
+		return response.data;
+	} catch (error) {
+		console.error(`Error updating daily total: ${error.message}`);
+		throw error;
+	}
+};
+
 export const getAllDailyTotals = async () => {
 	try {
 		const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/teamMembers/allDailyTotals`);
@@ -12,6 +37,8 @@ export const getAllDailyTotals = async () => {
 };
 
 export const submitDailyTotalToServer = async (teamMemberId, dailyTotals) => {
+	console.log("🚀 ~ file: salesTotals.js:40 ~ submitDailyTotalToServer ~ dailyTotals:", dailyTotals)
+	console.log("🚀 ~ file: salesTotals.js:40 ~ submitDailyTotalToServer ~ teamMemberId:", teamMemberId)
 	try {
 		const response = await axios.post(
 			`${process.env.REACT_APP_SERVER_URL}/teamMembers/${teamMemberId}/dailyTotals`,
@@ -24,10 +51,10 @@ export const submitDailyTotalToServer = async (teamMemberId, dailyTotals) => {
 	}
 };
 
-export const deleteDailyTotalFromServer = async (teamMemberId, dateId) => {
+export const deleteDailyTotalFromServer = async (teamMemberId, dailyTotalId) => {
 	try {
 		const response = await axios.delete(
-			`${process.env.REACT_APP_SERVER_URL}/teamMembers/${teamMemberId}/dailyTotals/${dateId}`
+			`${process.env.REACT_APP_SERVER_URL}/teamMembers/${teamMemberId}/dailyTotals/${dailyTotalId}`
 		);
 		return response.data;
 	} catch (error) {

@@ -6,15 +6,14 @@ export let tipOutPercentages = {
     host: 0.015
 };
 
-
 export const updateTipOutPercentages = (newPercentages) => {
     tipOutPercentages = { ...newPercentages };
 };
 
-export const CalculateTipOuts = (dailyTotals, selectedTeamMember, team) => {
+export const CalculateTipOuts = (dailyTotals, selectedTeamMember, teamMembers) => {
     console.log("🚀 ~ file: tipOuts.js:14 ~ CalculateTipOuts ~ selectedTeamMember:", selectedTeamMember)
     console.log("🚀 ~ file: tipOuts.js:14 ~ CalculateTipOuts ~ dailyTotals:", dailyTotals)
-    console.log("🚀 ~ file: tipOuts.js:14 ~ CalculateTipOuts ~ team:", team)
+    console.log("🚀 ~ file: tipOuts.js:14 ~ CalculateTipOuts ~ team:", teamMembers)
     let tipOuts = {
         bartender: 0,
         host: 0,
@@ -29,7 +28,7 @@ export const CalculateTipOuts = (dailyTotals, selectedTeamMember, team) => {
         tipOuts.host = Number(dailyTotals.foodSales) * tipOutPercentages.host;
 
         // Distribute tip outs to bartenders, runners, and hosts who worked the same day
-    for (const member of team) {
+    for (const member of teamMembers) {
         if (member.dailyTotals) {
             const workedSameDate = member.dailyTotals.some((total) => moment(total.date).isSame(moment(dailyTotals.date), 'day'));
             console.log("🚀 ~ file: tipOuts.js:35 ~ CalculateTipOuts ~ workedSameDate:", workedSameDate)

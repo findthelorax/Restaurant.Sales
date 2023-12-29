@@ -1,40 +1,125 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
+import { InputLabel, Select, MenuItem } from '@mui/material';
+import {
+	StyledDTFCard,
+	StyledBox,
+	StyledTextField,
+	StyledFormControl,
+	PinkStyledButton,
+} from '../../styles/mainLayoutStyles';
+import { TeamMembersContext } from '../../contexts/TeamMembersContext';
+import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
+import { CalculateTipOuts } from '../../hooks/tipOuts';
+import { NumericFormat } from 'react-number-format';
 import moment from 'moment';
-import { DailyTotalsFormRender } from '../dailyTotals/dailyTotalsFormRender';
-import { TeamMembersContext } from '../../contexts/TeamMembersContext'; // Import TeamMembersContext
-// import { updateWeeklyTotals } from '../../utils/api';
-// import { initialDailyTotals } from '../../hooks/initiateDailyTotals';
-// import { useHandleDailyTotalsChange } from '../../hooks/handleDailyTotalsChange';
-// import { useHandleSubmit } from '../../hooks/handleSubmitDailyTotals';
-// TODO: REMOVE DAILYTOTALS CONTEXT
+import { useUpdateTeamMemberTipOuts } from '../../hooks/updateTeamMemberTipOuts';
 
-export default function DailyTotalsForm() {
-	const { teamMembers } = useContext(TeamMembersContext); // Use TeamMembersContext
-	// const { submitDailyTotals } = useContext(DailyTotalsContext);
-	// const [dailyTotals, setDailyTotals] = useState(initialDailyTotals);
-	const [selectedTeamMember, setSelectedTeamMember] = React.useState('');
+export function DailyTotalsForm() {
+	const { teamMembers } = useContext(TeamMembersContext);
+	const { submitDailyTotalToServer } = useContext(DailyTotalsContext);
+	const [selectedTeamMember, setSelectedTeamMember] = useState('');
+	const today = moment().format('YYYY-MM-DD');
+	const [date, setDate] = useState(today);
+	const [foodSales, setFoodSales] = useState('');
+	const [barSales, setBarSales] = useState('');
+	const [nonCashTips, setNonCashTips] = useState('');
+	const [cashTips, setCashTips] = useState('');
+	const updateTeamMemberTipOuts = useUpdateTeamMemberTipOuts();
 
-	// const handleDailyTotalsChange = useHandleDailyTotalsChange(teamMembers, setDailyTotals, setSelectedTeamMember); // Use teamMembers instead of team
-	// const handleSubmit = useHandleSubmit(submitDailyTotals, dailyTotals, selectedTeamMember, setSelectedTeamMember, initialDailyTotals, setDailyTotals);
-	
-	// useEffect(() => {
-		// const now = moment().local();
-		// const nextDay = moment().local().add(1, 'days').startOf('day');
-		// const msUntilMidnight = nextDay.diff(now);
+	const fields = [
+		{ id: 'foodSales', label: 'Food Sales', value: foodSales, setValue: setFoodSales },
+		{ id: 'barSales', label: 'Bar Sales', value: barSales, setValue: setBarSales },
+		{ id: 'nonCashTips', label: 'Non-Cash Tips', value: nonCashTips, setValue: setNonCashTips },
+		{ id: 'cashTips', label: 'Cash Tips', value: cashTips, setValue: setCashTips },
+	];
 
-		// const timeoutId = setTimeout(updateWeeklyTotals, msUntilMidnight);
+	const handleSubmit = (event) => {
+		event.preventDefault();
 
-		// return () => clearTimeout(timeoutId); // Clear the timeout if the component is unmounted
-	// }, [selectedTeamMember]);
+		const newDailyTotal = {
+			teamMemberId: selectedTeamMember,
+			date: date,
+			foodSales: parseFloat(foodSales) || 0,
+			barSales: parseFloat(barSales) || 0,
+			nonCashTips: parseFloat(nonCashTips) || 0,
+			cashTips: parseFloat(cashTips) || 0,
+		};
+		const tipOuts = CalculateTipOuts(newDailyTotal, selectedTeamMember, teamMembers);
+		console.log("🚀 ~ file: dailyTotalsForm.js:46 ~ handleSubmit ~ teamMembers:", teamMembers)
+		console.log("🚀 ~ file: dailyTotalsForm.js:46 ~ handleSubmit ~ selectedTeamMember:", selectedTeamMember)
+		console.log("🚀 ~ file: dailyTotalsForm.js:46 ~ handleSubmit ~ newDailyTotal:", newDailyTotal)
+		console.log('🚀 ~ file: dailyTotalsForm.js:46 ~ handleSubmit ~ tipOuts:', tipOuts);
+
+		// try {
+		//     // Include the calculated tip outs when you submit the daily totals
+		//     const data = submitDailyTotalToServer({tipOuts: tipOuts, ...otherFields }, selectedTeamMember);
+		//     console.log('Success:', data);
+		// } catch (error) {
+		//     console.error('Error:', error);
+		// }
+
+		submitDailyTotalToServer(newDailyTotal);
+		updateTeamMemberTipOuts(date, position, tipOut, dailyTotals);
+		setSelectedTeamMember('');
+		setFoodSales('');
+		setBarSales('');
+		setNonCashTips('');
+		setCashTips('');
+	};
 
 	return (
-		<DailyTotalsFormRender
-			team={teamMembers} // Use teamMembers instead of team
-			// dailyTotals={dailyTotals}
-			// handleDailyTotalsChange={handleDailyTotalsChange}
-			// handleSubmit={handleSubmit}
-			selectedTeamMember={selectedTeamMember}
-			setSelectedTeamMember={setSelectedTeamMember}
-		/>
+		<StyledDTFCard>
+			<StyledBox component="form" onSubmit={handleSubmit}>
+				<StyledFormControl fullWidth margin="normal">
+					<InputLabel id="selectedTeamMember">Team Member</InputLabel>
+					<Select
+						labelId="selectedTeamMember"
+						id="selectedTeamMember"
+						value={selectedTeamMember}
+						label="Team Member"
+						onChange={(e) => setSelectedTeamMember(e.target.value)}
+					>
+						<MenuItem value="" disabled>
+							Select Team Member
+						</MenuItem>
+						{teamMembers.map((member) => (
+							<MenuItem key={member._id} value={member._id}>
+								{`${member.teamMemberFirstName} ${member.teamMemberLastName} - ${member.position}`}
+							</MenuItem>
+						))}
+					</Select>
+				</StyledFormControl>
+				<StyledTextField
+					id="date"
+					label="Date"
+					type="date"
+					value={date}
+					onChange={(e) => setDate(e.target.value)}
+					fullWidth
+				/>
+				{fields.map((field) => (
+					<NumericFormat
+						key={field.id}
+						id={field.id}
+						label={field.label}
+						customInput={StyledTextField}
+						thousandSeparator
+						prefix="$"
+						decimalScale={2}
+						fixedDecimalScale
+						value={field.value}
+						onValueChange={(values) => field.setValue(values.value || 0)}
+						fullWidth
+						margin="normal"
+						placeholder={field.label}
+					/>
+				))}
+				<PinkStyledButton variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
+					Submit Daily Totals
+				</PinkStyledButton>
+			</StyledBox>
+		</StyledDTFCard>
 	);
 }
+
+export default DailyTotalsForm;

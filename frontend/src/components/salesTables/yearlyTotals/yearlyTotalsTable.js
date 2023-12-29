@@ -6,54 +6,57 @@ import { titleToPropName, titles, formatUSD } from '../../../hooks/salesTotalsLo
 
 function YearlyTotalsTable({ selectedDate }) {
     const { teamMembers } = useContext(TeamMembersContext);
-    const date = moment(selectedDate);
+    const currentYear = moment(selectedDate).year();
 
-    const weeksOfYear = Array.from({ length: date.weeksInYear() }, (_, i) => i + 1);
+    const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
 
     const yearlyTotals = useMemo(() => {
-        const totals = Array(weeksOfYear.length)
-            .fill(0)
-            .map(() => {
-                const weekTotal = {};
-                Object.values(titleToPropName).forEach((propName) => {
-                    weekTotal[propName] = 0;
-                });
-                return weekTotal;
+        const totals = Array(10).fill(0).map(() => {
+            const yearTotal = {};
+            Object.values(titleToPropName).forEach((propName) => {
+                yearTotal[propName] = 0;
             });
+            return yearTotal;
+        });
 
-            teamMembers.forEach((member) => {
-            member.weeklyTotals.forEach((total) => {
-                const totalDate = moment(total.date);
-                const selectedYearStart = moment(selectedDate).startOf('year');
-                const selectedYearEnd = moment(selectedYearStart).endOf('year');
-
-                if (totalDate.isSameOrAfter(selectedYearStart) && totalDate.isSameOrBefore(selectedYearEnd)) {
-                    const weekOfYear = totalDate.week() - 1;
+        teamMembers.forEach((member) => {
+            member.dailyTotals.forEach((total) => {
+                const totalYear = moment(total.date).year();
+                const yearIndex = years.indexOf(totalYear);
+                if (yearIndex !== -1) {
                     Object.keys(titleToPropName).forEach((key) => {
-                        totals[weekOfYear][titleToPropName[key]] += total[titleToPropName[key]] || 0;
+                        totals[yearIndex][titleToPropName[key]] += total[titleToPropName[key]] || 0;
                     });
                 }
             });
         });
 
         return totals;
-    }, [teamMembers, selectedDate, weeksOfYear.length]);
+    }, [teamMembers, years]);
+
+    const projectedSales = useMemo(() => {
+        const totalSales = yearlyTotals.reduce((sum, total) => {
+            return sum + (isNaN(total.sales) ? 0 : total.sales);
+        }, 0);
+        return totalSales / years.length;
+    }, [yearlyTotals, years.length]);
 
     const columns = [
         { field: 'salesTips', headerName: 'Sales / Tips', width: 130 },
-        ...weeksOfYear.map((week, index) => {
-            const date = moment(selectedDate).startOf('year').add(index, 'weeks').format('MM/DD');
-            return { field: `week${week}`, headerName: `Week ${week} ${date}`, width: 110 };
+        ...years.map((year) => {
+            return { field: `year${year}`, headerName: `${year}`, width: 110 };
         }),
         { field: 'total', headerName: 'Total', width: 100 },
+        { field: 'projected', headerName: 'Projected Sales', width: 150 },
     ];
 
     const rows = titles.map((title, i) => {
         const row = { id: i, salesTips: title };
         yearlyTotals.forEach((total, index) => {
-            row[`week${index + 1}`] = formatUSD(total[titleToPropName[title]]);
+            row[`year${years[index]}`] = formatUSD(total[titleToPropName[title]]);
         });
         row.total = formatUSD(yearlyTotals.reduce((sum, total) => sum + total[titleToPropName[title]], 0));
+        row.projected = formatUSD(projectedSales);
         return row;
     });
 

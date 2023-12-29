@@ -6,12 +6,11 @@ import { PermanentDrawerLeft } from './dashboard/drawer/Drawer';
 import Dashboard from './Dashboard';
 import SettingsPage from './Settings';
 import DatabasePage from '../pages/database/databasePage';
-// import TeamMembersPage from '../pages/teamMembers/teamMembersPage';
+import TeamMembersPage from '../pages/teamMembers/teamMembersPage';
 // import { Outlet } from 'react-router-dom';
 // import { useAuth } from '../../contexts/AuthContext';
 
 function MainLayout() {
-	// const [selectedDate, setSelectedDate] = useState(moment());
 	// const { currentUser } = useAuth();
 
 	const [isDrawerOpen, setIsDrawerOpen] = useState(true);
@@ -32,8 +31,8 @@ function MainLayout() {
 		switch (selectedMenu) {
 			case 'Dashboard':
 				return <Dashboard selectedDate={selectedDate} handleDateChange={handleDateChange}/>;
-			// case 'Team Members':
-			// 	return <TeamMembersPage />;
+			case 'Team Members':
+				return <TeamMembersPage />;
 			case 'Database':
 				return <DatabasePage />;
 			case 'Settings':
