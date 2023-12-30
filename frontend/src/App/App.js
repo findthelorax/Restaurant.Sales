@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { TeamContextProvider } from '../contexts/TeamContext';
 import { TeamMembersProvider } from '../contexts/TeamMembersContext';
-import { DailyTotalsProvider } from '../contexts/DailyTotalsContext';
+// import { DailyTotalsProvider } from '../contexts/DailyTotalsContext';
 import { ErrorProvider } from '../contexts/ErrorContext';
 
 import MainLayout from '../pages/MainLayout';
@@ -13,9 +13,9 @@ function App() {
 			<ErrorProvider>
 				<TeamContextProvider>
 					<TeamMembersProvider>
-						<DailyTotalsProvider>
+						{/* <DailyTotalsProvider> */}
 							<MainLayout />
-						</DailyTotalsProvider>
+						{/* </DailyTotalsProvider> */}
 					</TeamMembersProvider>
 				</TeamContextProvider>
 			</ErrorProvider>

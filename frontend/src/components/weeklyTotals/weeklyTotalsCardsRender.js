@@ -15,13 +15,6 @@ function WeeklyFoodSalesCardRender({ selectedDate, salesDifferences, sx, totalWe
 	if (!teamMembers) {
 		return <CircularProgress />;
 	}
-
-	// const weekStart = moment(selectedDate).startOf('week').format('YYYY-MM-DD');
-	// const totalWeeklyFoodSales = teamMembers.reduce((total, member) => {
-	// 	const weekTotal = member.weeklyTotals.find((total) => total.weekStart === weekStart);
-	// 	return total + (weekTotal ? weekTotal.foodSales : 0);
-	// }, 0);
-
 	const formattedTotalWeeklyFoodSales = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
 		totalWeeklyFoodSales
 	);
@@ -90,20 +83,9 @@ function WeeklyBarSalesCardRender({
 	totalWeeklyBarSales,
 }) {
 	const { teamMembers } = useContext(TeamMembersContext);
-	console.log('🚀 ~ file: weeklyTotalsCardsRender.js:16 ~ salesDifferences:', salesDifferences);
 	if (!teamMembers) {
 		return <CircularProgress />;
 	}
-	const weekStart = moment(selectedDate).startOf('week').format('YYYY-MM-DD');
-	const totalWeekBarSales = teamMembers.reduce((total, member) => {
-		const weekTotal = member.weeklyTotals.find((total) => total.weekStart === weekStart);
-		return total + (weekTotal ? weekTotal.barSales : 0);
-	}, 0);
-	console.log(
-		'🚀 ~ file: weeklyTotalsCardsRender.js:104 ~ totalWeekBarSales ~ totalWeekBarSales:',
-		totalWeekBarSales
-	);
-
 	const formattedTotalWeeklyBarSales = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
 		totalWeeklyBarSales
 	);

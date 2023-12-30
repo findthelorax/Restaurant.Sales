@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import moment from 'moment';
 import { InputLabel, Select, MenuItem } from '@mui/material';
 import {
 	StyledDTFCard,
@@ -8,15 +9,13 @@ import {
 	PinkStyledButton,
 } from '../../styles/mainLayoutStyles';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
-import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
-import { CalculateTipOuts } from '../../hooks/tipOuts';
+// import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
 import { NumericFormat } from 'react-number-format';
-import moment from 'moment';
-import { useUpdateTeamMemberTipOuts } from '../../hooks/updateTeamMemberTipOuts';
+import { useHandleSubmit } from '../../hooks/dailyTotals/handleSubmitDailyTotals';
 
 export function DailyTotalsForm() {
 	const { teamMembers } = useContext(TeamMembersContext);
-	const { submitDailyTotalToServer } = useContext(DailyTotalsContext);
+	// const { submitDailyTotalToServer } = useContext(DailyTotalsContext);
 	const [selectedTeamMember, setSelectedTeamMember] = useState('');
 	const today = moment().format('YYYY-MM-DD');
 	const [date, setDate] = useState(today);
@@ -24,7 +23,6 @@ export function DailyTotalsForm() {
 	const [barSales, setBarSales] = useState('');
 	const [nonCashTips, setNonCashTips] = useState('');
 	const [cashTips, setCashTips] = useState('');
-	const updateTeamMemberTipOuts = useUpdateTeamMemberTipOuts();
 
 	const fields = [
 		{ id: 'foodSales', label: 'Food Sales', value: foodSales, setValue: setFoodSales },
@@ -33,33 +31,22 @@ export function DailyTotalsForm() {
 		{ id: 'cashTips', label: 'Cash Tips', value: cashTips, setValue: setCashTips },
 	];
 
-	const handleSubmit = (event) => {
+	// const handleSubmit = useHandleSubmit(submitDailyTotalToServer, { date, foodSales, barSales, nonCashTips, cashTips }, selectedTeamMember, setSelectedTeamMember, setFoodSales, setBarSales, setNonCashTips, setCashTips);
+
+		const handleSubmit = (event) => {
 		event.preventDefault();
 
 		const newDailyTotal = {
 			teamMemberId: selectedTeamMember,
 			date: date,
-			foodSales: parseFloat(foodSales) || 0,
-			barSales: parseFloat(barSales) || 0,
-			nonCashTips: parseFloat(nonCashTips) || 0,
-			cashTips: parseFloat(cashTips) || 0,
+			foodSales: parseFloat(foodSales),
+			barSales: parseFloat(barSales),
+			nonCashTips: parseFloat(nonCashTips),
+			cashTips: parseFloat(cashTips),
 		};
-		const tipOuts = CalculateTipOuts(newDailyTotal, selectedTeamMember, teamMembers);
-		console.log("🚀 ~ file: dailyTotalsForm.js:46 ~ handleSubmit ~ teamMembers:", teamMembers)
-		console.log("🚀 ~ file: dailyTotalsForm.js:46 ~ handleSubmit ~ selectedTeamMember:", selectedTeamMember)
-		console.log("🚀 ~ file: dailyTotalsForm.js:46 ~ handleSubmit ~ newDailyTotal:", newDailyTotal)
-		console.log('🚀 ~ file: dailyTotalsForm.js:46 ~ handleSubmit ~ tipOuts:', tipOuts);
 
-		// try {
-		//     // Include the calculated tip outs when you submit the daily totals
-		//     const data = submitDailyTotalToServer({tipOuts: tipOuts, ...otherFields }, selectedTeamMember);
-		//     console.log('Success:', data);
-		// } catch (error) {
-		//     console.error('Error:', error);
-		// }
+		addDailyTotal(newDailyTotal);
 
-		submitDailyTotalToServer(newDailyTotal);
-		updateTeamMemberTipOuts(date, position, tipOut, dailyTotals);
 		setSelectedTeamMember('');
 		setFoodSales('');
 		setBarSales('');
@@ -67,6 +54,7 @@ export function DailyTotalsForm() {
 		setCashTips('');
 	};
 
+	
 	return (
 		<StyledDTFCard>
 			<StyledBox component="form" onSubmit={handleSubmit}>

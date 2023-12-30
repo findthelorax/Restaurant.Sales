@@ -46,7 +46,6 @@ function calculateSales(totals, salesType, start, end) {
 }
 
 function calculateYesterdaySales(dailyTotals, salesType) {
-    console.log("🚀 ~ file: salesTotalsLogic.js:44 ~ calculateYesterdaySales ~ dailyTotals:", dailyTotals)
     const yesterdayStart = moment().subtract(1, 'day').startOf('day');
     const yesterdayEnd = moment().subtract(1, 'day').endOf('day');
     return calculateSales(dailyTotals, salesType, yesterdayStart, yesterdayEnd);
@@ -59,7 +58,6 @@ function calculateTodaySales(dailyTotals, salesType) {
 }
 
 function calculateLastWeekSales(weeklyTotals, salesType) {
-    console.log("🚀 ~ file: salesTotalsLogic.js:57 ~ calculateLastWeekSales ~ weeklyTotals:", weeklyTotals)
     const lastWeekStart = moment().subtract(1, 'week').startOf('week');
     const lastWeekEnd = moment().subtract(1, 'week').endOf('week');
     return calculateSales(weeklyTotals, salesType, lastWeekStart, lastWeekEnd);
@@ -72,7 +70,6 @@ function calculateThisWeekSales(weeklyTotals, salesType) {
 }
 
 function calculateWeeklySalesDifferences(weeklyTotals) {
-    // console.log("🚀 ~ file: salesTotalsLogic.js:64 ~ calculateWeeklySalesDifferences ~ weeklyTotals:", weeklyTotals)
     if (!weeklyTotals || weeklyTotals.length === 0) return {};
 
     const salesTypes = ['barSales', 'foodSales'];
@@ -101,7 +98,6 @@ function calculateWeeklySalesDifferences(weeklyTotals) {
 }
 
 function calculateDailySalesDifferences(dailyTotals) {
-    console.log("🚀 ~ file: salesTotalsLogic.js:93 ~ calculateDailySalesDifferences ~ dailyTotals:", dailyTotals)
     if (!dailyTotals || dailyTotals.length === 0) return {};
 
     const salesTypes = ['barSales', 'foodSales'];

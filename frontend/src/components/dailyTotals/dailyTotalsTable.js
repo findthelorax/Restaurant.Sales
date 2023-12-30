@@ -2,8 +2,8 @@ import React, { useContext, useEffect } from 'react';
 import moment from 'moment';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 import { DailyTotalsTableRender } from '../dailyTotals/dailyTotalsTableRender';
-import { useGetAllDailyTotals } from '../../hooks/getAllDailyTotals';
-import { useDeleteDailyTotal } from '../../hooks/deleteDailyTotal';
+import { useGetAllDailyTotals } from '../../hooks/dailyTotals/getAllDailyTotals';
+import { useDeleteDailyTotal } from '../../hooks/dailyTotals/deleteDailyTotal';
 import { DeleteDTButton } from '../deleteButton';
 
 const columnNames = {

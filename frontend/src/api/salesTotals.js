@@ -37,8 +37,6 @@ export const getAllDailyTotals = async () => {
 };
 
 export const submitDailyTotalToServer = async (teamMemberId, dailyTotals) => {
-	console.log("🚀 ~ file: salesTotals.js:40 ~ submitDailyTotalToServer ~ dailyTotals:", dailyTotals)
-	console.log("🚀 ~ file: salesTotals.js:40 ~ submitDailyTotalToServer ~ teamMemberId:", teamMemberId)
 	try {
 		const response = await axios.post(
 			`${process.env.REACT_APP_SERVER_URL}/teamMembers/${teamMemberId}/dailyTotals`,

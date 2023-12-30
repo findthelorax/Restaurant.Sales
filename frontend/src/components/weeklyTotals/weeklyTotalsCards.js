@@ -16,12 +16,9 @@ export function WeeklyFoodSalesCard({ selectedDate }) {
 			return totalDate.isSameOrAfter(selectedWeekStart) && totalDate.isSameOrBefore(selectedWeekEnd);
 		})
 	);
-	console.log('🚀 ~ file: weeklyTotalsCards.js:19 ~ WeeklyFoodSalesCard ~ allWeeklyTotals:', allWeeklyTotals);
 
 	const totalWeeklyFoodSales = allWeeklyTotals.reduce((sum, total) => sum + total.foodSales, 0);
-	console.log("🚀 ~ file: weeklyTotalsCards.js:22 ~ WeeklyFoodSalesCard ~ totalWeeklyFoodSales:", totalWeeklyFoodSales)
-	const salesDifferences = calculateWeeklySalesDifferences(totalWeeklyFoodSales);
-	console.log('🚀 ~ file: weeklyTotalsCards.js:23 ~ WeeklyFoodSalesCard ~ salesDifferences:', salesDifferences);
+	const salesDifferences = calculateWeeklySalesDifferences(allWeeklyTotals);
 
 	return <WeeklyFoodSalesCardRender
     selectedDate={selectedDate}
@@ -44,7 +41,7 @@ export function WeeklyBarSalesCard({ selectedDate }) {
 	);
 
     const totalWeeklyBarSales = allWeeklyTotals.reduce((sum, total) => sum + total.barSales, 0);
-	const salesDifferences = calculateWeeklySalesDifferences(totalWeeklyBarSales);
+	const salesDifferences = calculateWeeklySalesDifferences(allWeeklyTotals);
 
 	return (
 		<WeeklyBarSalesCardRender
