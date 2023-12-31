@@ -11,18 +11,20 @@ import {
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 // import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
 import { NumericFormat } from 'react-number-format';
-import { useHandleSubmit } from '../../hooks/dailyTotals/handleSubmitDailyTotals';
+import { useSubmitDailyTotals } from '../../hooks/dailyTotals/submitDailyTotals';
+import { useHandleSubmit } from '../../hooks/dailyTotals/handleSubmitDailyTotals'; 
 
 export function DailyTotalsForm() {
 	const { teamMembers } = useContext(TeamMembersContext);
 	// const { submitDailyTotalToServer } = useContext(DailyTotalsContext);
-	const [selectedTeamMember, setSelectedTeamMember] = useState('');
+	const [selectedTeamMember, setSelectedTeamMember] = useState(null);
 	const today = moment().format('YYYY-MM-DD');
 	const [date, setDate] = useState(today);
 	const [foodSales, setFoodSales] = useState('');
 	const [barSales, setBarSales] = useState('');
 	const [nonCashTips, setNonCashTips] = useState('');
 	const [cashTips, setCashTips] = useState('');
+	const submitDailyTotals = useSubmitDailyTotals();
 
 	const fields = [
 		{ id: 'foodSales', label: 'Food Sales', value: foodSales, setValue: setFoodSales },
@@ -31,30 +33,33 @@ export function DailyTotalsForm() {
 		{ id: 'cashTips', label: 'Cash Tips', value: cashTips, setValue: setCashTips },
 	];
 
-	// const handleSubmit = useHandleSubmit(submitDailyTotalToServer, { date, foodSales, barSales, nonCashTips, cashTips }, selectedTeamMember, setSelectedTeamMember, setFoodSales, setBarSales, setNonCashTips, setCashTips);
+	const handleSelectTeamMember = (event) => {
+		const selectedTeamMemberId = event.target.value;
+		const selectedTeamMember = teamMembers.find(member => member._id === selectedTeamMemberId);
+		setSelectedTeamMember(selectedTeamMember);
+	};
 
-		const handleSubmit = (event) => {
+	const handleSubmit = (event) => {
 		event.preventDefault();
 
-		const newDailyTotal = {
-			teamMemberId: selectedTeamMember,
-			date: date,
-			foodSales: parseFloat(foodSales),
-			barSales: parseFloat(barSales),
-			nonCashTips: parseFloat(nonCashTips),
-			cashTips: parseFloat(cashTips),
+		const dailyTotals = {
+			date,
+			foodSales,
+			barSales,
+			nonCashTips,
+			cashTips
 		};
 
-		addDailyTotal(newDailyTotal);
+		submitDailyTotals(selectedTeamMember, dailyTotals);
 
 		setSelectedTeamMember('');
+		setDate(today);
 		setFoodSales('');
 		setBarSales('');
 		setNonCashTips('');
 		setCashTips('');
 	};
 
-	
 	return (
 		<StyledDTFCard>
 			<StyledBox component="form" onSubmit={handleSubmit}>
@@ -63,10 +68,10 @@ export function DailyTotalsForm() {
 					<Select
 						labelId="selectedTeamMember"
 						id="selectedTeamMember"
-						value={selectedTeamMember}
+						value={selectedTeamMember ? selectedTeamMember._id : ''}
 						label="Team Member"
-						onChange={(e) => setSelectedTeamMember(e.target.value)}
-					>
+						onChange={handleSelectTeamMember}
+						>
 						<MenuItem value="" disabled>
 							Select Team Member
 						</MenuItem>
@@ -96,7 +101,7 @@ export function DailyTotalsForm() {
 						decimalScale={2}
 						fixedDecimalScale
 						value={field.value}
-						onValueChange={(values) => field.setValue(values.value || 0)}
+						onValueChange={(values) => field.setValue(parseFloat(values.value) || 0)}
 						fullWidth
 						margin="normal"
 						placeholder={field.label}

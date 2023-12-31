@@ -10,41 +10,43 @@ export const updateTipOutPercentages = (newPercentages) => {
     tipOutPercentages = { ...newPercentages };
 };
 
-export const CalculateTipOuts = (dailyTotal, selectedTeamMember, teamMembers) => {
-    let tipOuts = {
-        bartender: 0,
-        host: 0,
-        runner: 0,
-        server: 0
-    };
+export const CalculateTipOuts = (selectedTeamMember, dailyTotals, teamMembers) => {
+    console.log("🚀 ~ file: tipOuts.js:14 ~ CalculateTipOuts ~ dailyTotals:", dailyTotals)
+
+    let bartenderTipOut = 0;
+    let runnerTipOut = 0;
+    let hostTipOut = 0;
 
     if (selectedTeamMember.position === 'server') {
         // Calculate server tip outs
-        tipOuts.bartender = Number(dailyTotal.barSales) * tipOutPercentages.bartender;
-        tipOuts.runner = Number(dailyTotal.foodSales) * tipOutPercentages.runner;
-        tipOuts.host = Number(dailyTotal.foodSales) * tipOutPercentages.host;
+        bartenderTipOut = Number(dailyTotals.barSales) * tipOutPercentages.bartender;
+        runnerTipOut = Number(dailyTotals.foodSales) * tipOutPercentages.runner;
+        hostTipOut = Number(dailyTotals.foodSales) * tipOutPercentages.host;
 
         // Distribute tip outs to bartenders, runners, and hosts who worked the same day
-    for (const member of teamMembers) {
-        if (member.dailyTotals) {
-            const workedSameDate = member.dailyTotals.some((total) => moment(total.date).isSame(moment(dailyTotal.date), 'day'));
-            console.log("🚀 ~ file: tipOuts.js:35 ~ CalculateTipOuts ~ workedSameDate:", workedSameDate)
+        for (const member of teamMembers) {
+            console.log("🚀 ~ file: tipOuts.js:33 ~ CalculateTipOuts ~ teamMembers:", teamMembers)
+            console.log("🚀 ~ file: tipOuts.js:33 ~ CalculateTipOuts ~ member:", member)
+            if (member.dailyTotals) {
+                const total = member.dailyTotals.find((total) => moment(total.date).isSame(moment(dailyTotals.date), 'day'));
+                console.log("🚀 ~ file: tipOuts.js:35 ~ CalculateTipOuts ~ total:", total)
 
-            if (workedSameDate) {
-                if (member.position === 'bartender') {
-                    const total = member.dailyTotals.find((total) => total.date === dailyTotal.date);
-                    if (total) total.barTipOuts += tipOuts.bartender;
-                } else if (member.position === 'runner') {
-                    const total = member.dailyTotals.find((total) => total.date === dailyTotal.date);
-                    if (total) total.runnerTipOuts += tipOuts.runner;
-                } else if (member.position === 'host') {
-                    const total = member.dailyTotals.find((total) => total.date === dailyTotal.date);
-                    if (total) total.hostTipOuts += tipOuts.host;
+                if (total) {
+                    if (member.position === 'bartender') {
+                        total.barTipOuts += bartenderTipOut;
+                    } else if (member.position === 'runner') {
+                        total.runnerTipOuts += runnerTipOut;
+                    } else if (member.position === 'host') {
+                        total.hostTipOuts += hostTipOut;
+                    }
                 }
             }
         }
     }
-    }
-    console.log("🚀 ~ file: tipOuts.js:55 ~ CalculateTipOuts ~ tipOuts:", tipOuts)
-    return tipOuts;
+
+    return {
+        bartender: bartenderTipOut,
+        runner: runnerTipOut,
+        host: hostTipOut,
+    };
 };

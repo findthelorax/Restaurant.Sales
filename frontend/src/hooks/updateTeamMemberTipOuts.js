@@ -7,6 +7,8 @@ export const useUpdateTeamMemberTipOuts = () => {
     const { teamMembers } = useContext(TeamMembersContext);
 
     const updateTeamMemberTipOuts = async (date, position, tipOuts, dailyTotals) => {
+        console.log("🚀 ~ file: updateTeamMemberTipOuts.js:10 ~ updateTeamMemberTipOuts ~ dailyTotals:", dailyTotals)
+        console.log("🚀 ~ file: updateTeamMemberTipOuts.js:10 ~ updateTeamMemberTipOuts ~ position:", position)
         console.log("🚀 ~ file: updateTeamMemberTipOuts.js:13 ~ tipOut:", tipOuts)
         const promises = teamMembers.map(async (member) => {
             const workedSameDate = member.dailyTotals.some(

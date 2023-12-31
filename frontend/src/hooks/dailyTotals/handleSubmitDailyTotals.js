@@ -7,6 +7,17 @@ export const useHandleSubmit = (submitDailyTotals, dailyTotals, selectedTeamMemb
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const teamMemberExists = teamMembers.some(member => member._id === selectedTeamMember);
+        if (!teamMemberExists) {
+            throw new Error('Selected team member does not exist');
+        }
+
+
+
+
+
+
         const { date, ...otherFields } = dailyTotals;
         // Prepare the daily totals
         const preparedDailyTotals = prepareDailyTotals(dailyTotals, selectedTeamMember, teamMembers);

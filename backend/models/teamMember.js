@@ -55,6 +55,7 @@ TeamMemberSchema.pre('save', function (next) {
 });
 
 TeamMemberSchema.methods.addDailyTotal = function (dailyTotal) {
+	console.log("🚀 ~ file: teamMember.js:58 ~ dailyTotal:", dailyTotal)
 	// Add the daily total
 	this.dailyTotals.push(dailyTotal);
 
@@ -63,7 +64,7 @@ TeamMemberSchema.methods.addDailyTotal = function (dailyTotal) {
     const weekEnd = moment(dailyTotal.date).endOf('week').format('YYYY-MM-DD');
 
 	// Find the index of the corresponding weekly total
-	const index = this.weeklyTotals.findIndex((total) => total.weekStart === weekStart);
+	const index = this.weeklyTotals.findIndex((total) => total.weekStart.toISOString() === weekStart);
 
 	// If the weekly total doesn't exist, create it
 	if (index === -1) {
@@ -137,9 +138,9 @@ TeamMemberSchema.methods.updateWeeklyTotals = function () {
     });
 
     // Find the existing weekly total for the current week
-    const existingWeeklyTotalIndex = this.weeklyTotals.findIndex((total) =>
-        moment(total.weekStart).isSame(weekStart, 'day')
-    );
+	const existingWeeklyTotalIndex = this.weeklyTotals.findIndex((total) =>
+    total.weekStart.toISOString() === weekStart.toISOString()
+);
 
     // Update the existing weekly total or add a new one
     if (existingWeeklyTotalIndex !== -1) {

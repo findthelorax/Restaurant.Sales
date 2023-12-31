@@ -3,7 +3,8 @@ const moment = require('moment');
 require('dotenv').config();
 
 function validateDailyTotal(dailyTotal) {
-	dailyTotal.date = moment.utc(dailyTotal.date).hours(12).toDate();
+	// dailyTotal.date = moment.utc(dailyTotal.date).hours(12).toDate();
+	dailyTotal.date = moment.utc(dailyTotal.date);
 	return (
 		dailyTotal.date && dailyTotal.foodSales && dailyTotal.barSales && dailyTotal.nonCashTips && dailyTotal.cashTips
 	);
@@ -50,15 +51,15 @@ exports.createTeamMember = async (req, res) => {
 	try {
 		const savedMember = await newMember.save();
 		res.status(201).json(savedMember);
-    } catch (error) {
-        if (error.code === 11000) {
-            res.status(400).json({
-                error: `A team member ${teamMemberFirstName} ${teamMemberLastName} - ${position} already exists.`
-            });
-        } else {
-            res.status(400).send({ message: err.message });
-        }
-    }
+	} catch (error) {
+		if (error.code === 11000) {
+			res.status(400).json({
+				error: `A team member ${teamMemberFirstName} ${teamMemberLastName} - ${position} already exists.`,
+			});
+		} else {
+			res.status(400).send({ message: err.message });
+		}
+	}
 };
 
 exports.updateTeamMember = async (req, res) => {
@@ -70,7 +71,11 @@ exports.updateTeamMember = async (req, res) => {
 	}
 
 	try {
-		const updatedMember = await TeamMember.findByIdAndUpdate(teamMemberId, { teamMemberFirstName, teamMemberLastName, position }, { new: true });
+		const updatedMember = await TeamMember.findByIdAndUpdate(
+			teamMemberId,
+			{ teamMemberFirstName, teamMemberLastName, position },
+			{ new: true }
+		);
 
 		if (!updatedMember) {
 			return res.status(404).json({ error: 'Team member not found' });
@@ -94,7 +99,9 @@ exports.deleteTeamMember = async (req, res) => {
 	try {
 		const deleted = await TeamMember.findByIdAndDelete(teamMemberId);
 		if (!deleted) throw new Error('Deletion failed');
-		res.json({ message: `Team member ${teamMember.teamMemberFirstName} ${teamMember.teamMemberLastName} (${teamMember.position}) was deleted` });
+		res.json({
+			message: `Team member ${teamMember.teamMemberFirstName} ${teamMember.teamMemberLastName} (${teamMember.position}) was deleted`,
+		});
 	} catch (error) {
 		console.error(`Error deleting team member ${teamMemberId}:`, error);
 		res.status(500).json({ error: 'Internal Server Error' });
@@ -114,26 +121,26 @@ exports.getTeamMembers = async (req, res) => {
 
 // Get All Daily Totals
 exports.getAllDailyTotals = async (req, res, next) => {
-    try {
-        const teamMembers = await TeamMember.find({});
-        const dailyTotalsAll = teamMembers.flatMap(teamMember => teamMember.dailyTotals);
-        res.json(dailyTotalsAll);
-    } catch (error) {
-        console.error(`Error getting daily totals: ${error.message}`);
-        next(error);
-    }
+	try {
+		const teamMembers = await TeamMember.find({});
+		const dailyTotalsAll = teamMembers.flatMap((teamMember) => teamMember.dailyTotals);
+		res.json(dailyTotalsAll);
+	} catch (error) {
+		console.error(`Error getting daily totals: ${error.message}`);
+		next(error);
+	}
 };
 
 // Get All Weekly Totals
 exports.getAllWeeklyTotals = async (req, res, next) => {
-    try {
-        const teamMembers = await TeamMember.find({});
-        const weeklyTotalsAll = teamMembers.flatMap(teamMember => teamMember.weeklyTotals);
-        res.json(weeklyTotalsAll);
-    } catch (error) {
-        console.error(`Error getting weekly totals: ${error.message}`);
-        next(error);
-    }
+	try {
+		const teamMembers = await TeamMember.find({});
+		const weeklyTotalsAll = teamMembers.flatMap((teamMember) => teamMember.weeklyTotals);
+		res.json(weeklyTotalsAll);
+	} catch (error) {
+		console.error(`Error getting weekly totals: ${error.message}`);
+		next(error);
+	}
 };
 
 // Route to get daily totals for a specific team member
@@ -155,10 +162,8 @@ exports.getDailyTotals = async (req, res) => {
 exports.getDailyTotal = async (req, res) => {
 	try {
 		const { teamMemberId, dailyTotalId } = req.params;
-		console.log(`teamMemberId: ${teamMemberId}, dailyTotalId: ${dailyTotalId}`);
 
 		const teamMember = await TeamMember.findById(teamMemberId);
-		console.log('teamMember:', teamMember);
 		if (!teamMember) {
 			return res.status(404).send({ message: 'Team member not found' });
 		}
@@ -235,10 +240,8 @@ exports.createDailyTotal = async (req, res) => {
 exports.deleteDailyTotal = async (req, res) => {
 	try {
 		const { teamMemberId, dailyTotalId } = req.params;
-		console.log(`teamMemberId: ${teamMemberId}, dailyTotalId: ${dailyTotalId}`);
 
 		const teamMember = await TeamMember.findById(teamMemberId);
-		console.log('teamMember:', teamMember);
 		if (!teamMember) {
 			return res.status(404).send({ message: 'Team member not found' });
 		}
@@ -365,7 +368,6 @@ exports.createWeeklyTotals = async (req, res) => {
 		const memberId = req.params.teamMemberId;
 		const week = req.params.week;
 		const weeklyTotalsData = { ...req.body, week };
-		console.log("🚀 ~ file: TeamMembersController.js:335 ~ exports.createWeeklyTotals= ~ weeklyTotalsData:", weeklyTotalsData)
 
 		await TeamMember.updateOne({ _id: memberId }, { $push: { weeklyTotals: weeklyTotalsData } });
 
@@ -407,12 +409,15 @@ exports.updateWeeklyTotalsPut = async (req, res) => {
 
 		// Create a new date using moment and set it to the start of the week
 		const weekStartLocal = moment().local().startOf('week').toDate();
-		console.log("🚀 ~ file: TeamMembersController.js:375 ~ exports.updateWeeklyTotalsPut= ~ weekStartLocal:", weekStartLocal)
+		console.log(
+			'🚀 ~ file: TeamMembersController.js:375 ~ exports.updateWeeklyTotalsPut= ~ weekStartLocal:',
+			weekStartLocal
+		);
 		const weekStart = moment().startOf('week').toDate();
-		console.log("🚀 ~ file: TeamMembersController.js:377 ~ exports.updateWeeklyTotalsPut= ~ weekStart:", weekStart)
+		console.log('🚀 ~ file: TeamMembersController.js:377 ~ exports.updateWeeklyTotalsPut= ~ weekStart:', weekStart);
 
 		const existingWeeklyTotal = teamMember.weeklyTotals.find((total) =>
-			moment(total.week).local().isSame(weekStart, 'day')
+			moment(total.week).local().startOf('week').isSame(weekStart, 'week')
 		);
 		if (existingWeeklyTotal) {
 			return res.status(400).json({ message: 'Weekly total for this week already exists' });
@@ -432,9 +437,15 @@ exports.updateWeeklyTotalsPatch = async (req, res) => {
 	try {
 		// Parse the date string from the client using moment
 		const weekStartLocal = moment(req.params.week).local().startOf('day').toDate();
-		console.log("🚀 ~ file: TeamMembersController.js:400 ~ exports.updateWeeklyTotalsPatch= ~ weekStartLocal:", weekStartLocal)
-		const weekStart = moment(req.params.week).startOf('day').toDate();
-		console.log("🚀 ~ file: TeamMembersController.js:402 ~ exports.updateWeeklyTotalsPatch= ~ weekStart:", weekStart)
+		console.log(
+			'🚀 ~ file: TeamMembersController.js:400 ~ exports.updateWeeklyTotalsPatch= ~ weekStartLocal:',
+			weekStartLocal
+		);
+		const weekStart = moment(req.params.week).startOf('week').toDate();
+		console.log(
+			'🚀 ~ file: TeamMembersController.js:402 ~ exports.updateWeeklyTotalsPatch= ~ weekStart:',
+			weekStart
+		);
 
 		// Check for existing weekly total for the same week
 		const existingWeeklyTotal = await TeamMember.findOne({

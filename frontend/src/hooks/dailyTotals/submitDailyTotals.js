@@ -1,45 +1,49 @@
 import { useContext } from 'react';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 import { prepareDailyTotals } from '../dailyTotals/prepareDailyTotals';
-import { submitDailyTotalToServer } from '../utils/api';
+import { submitDailyTotalToServer } from '../../api/salesTotals';
+// import { useUpdateTeamMemberTipOuts } from '../updateTeamMemberTipOuts';
+// import { tipOuts } from '../tipOuts';
 
 export const useSubmitDailyTotals = () => {
 	const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
 
-	const submitDailyTotals = async (dailyTotals, selectedTeamMember) => {
-		const existingTeamMember = teamMembers.find((member) => member._id === selectedTeamMember._id);
-		if (!existingTeamMember) {
-			alert('Selected team member does not match an existing team member.');
+	const submitDailyTotals = async (selectedTeamMember, dailyTotal) => {
+
+		const teamMemberExists = teamMembers.some((member) => member._id === selectedTeamMember._id);
+
+		if (!teamMemberExists) {
+			console.error('Selected team member does not exist in the database.');
 			return;
 		}
-		if (selectedTeamMember.position === 'server') {
-			dailyTotals.barTipOuts = tipOuts.bartender;
-			dailyTotals.runnerTipOuts = tipOuts.runner;
-			dailyTotals.hostTipOuts = tipOuts.host;
+		// if (selectedTeamMember.position === 'server') {
+		// 	dailyTotals.barTipOuts = tipOuts.bartender;
+		// 	dailyTotals.runnerTipOuts = tipOuts.runner;
+		// 	dailyTotals.hostTipOuts = tipOuts.host;
 
-			for (const member of team) {
-				console.log('🚀 ~ file: submitDailyTotals.js:28 ~ team:', team);
-				console.log('🚀 ~ file: submitDailyTotals.js:28 ~ member:', member);
-				const workedSameDate = member.dailyTotals.some((total) => total.date === dailyTotals.date);
-				console.log('🚀 ~ file: submitDailyTotals.js:29 ~ workedSameDate:', workedSameDate);
+		// 	for (const member of teamMembers) {
+		// 		console.log('🚀 ~ file: submitDailyTotals.js:28 ~ team:', teamMembers);
+		// 		console.log('🚀 ~ file: submitDailyTotals.js:28 ~ member:', member);
+		// 		const workedSameDate = member.dailyTotals.some((total) => total.date === dailyTotals.date);
+		// 		console.log('🚀 ~ file: submitDailyTotals.js:29 ~ workedSameDate:', workedSameDate);
 
-				if (workedSameDate) {
-					if (member.position === 'bartender') {
-						await updateTeamMemberTipOuts(dailyTotals.date, 'bartender', tipOuts.bartender);
-					} else if (member.position === 'host') {
-						await updateTeamMemberTipOuts(dailyTotals.date, 'host', tipOuts.host);
-					} else if (member.position === 'runner') {
-						await updateTeamMemberTipOuts(dailyTotals.date, 'runner', tipOuts.runner);
-					}
-				}
-			}
-		} else {
-			dailyTotals.barTipOuts = 0;
-			dailyTotals.runnerTipOuts = 0;
-			dailyTotals.hostTipOuts = 0;
-		}
+		// 		if (workedSameDate) {
+		// 			if (member.position === 'bartender') {
+		// 				await useUpdateTeamMemberTipOuts(dailyTotals.date, 'bartender', tipOuts.bartender);
+		// 			} else if (member.position === 'host') {
+		// 				await useUpdateTeamMemberTipOuts(dailyTotals.date, 'host', tipOuts.host);
+		// 			} else if (member.position === 'runner') {
+		// 				await useUpdateTeamMemberTipOuts(dailyTotals.date, 'runner', tipOuts.runner);
+		// 			}
+		// 		}
+		// 	}
+		// } else {
+		// 	dailyTotals.barTipOuts = 0;
+		// 	dailyTotals.runnerTipOuts = 0;
+		// 	dailyTotals.hostTipOuts = 0;
+		// }
 
-		const newDailyTotals = prepareDailyTotals(dailyTotals, selectedTeamMember, teamMembers);
+		const newDailyTotals = prepareDailyTotals(selectedTeamMember, dailyTotal, teamMembers);
 
 		try {
 			await submitDailyTotalToServer(selectedTeamMember._id, newDailyTotals);

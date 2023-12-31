@@ -70,6 +70,7 @@ function calculateThisWeekSales(weeklyTotals, salesType) {
 }
 
 function calculateWeeklySalesDifferences(weeklyTotals) {
+    console.log("🚀 ~ file: salesTotalsLogic.js:73 ~ calculateWeeklySalesDifferences ~ weeklyTotals:", weeklyTotals)
     if (!weeklyTotals || weeklyTotals.length === 0) return {};
 
     const salesTypes = ['barSales', 'foodSales'];
@@ -98,6 +99,7 @@ function calculateWeeklySalesDifferences(weeklyTotals) {
 }
 
 function calculateDailySalesDifferences(dailyTotals) {
+    console.log("🚀 ~ file: salesTotalsLogic.js:102 ~ calculateDailySalesDifferences ~ dailyTotals:", dailyTotals)
     if (!dailyTotals || dailyTotals.length === 0) return {};
 
     const salesTypes = ['barSales', 'foodSales'];

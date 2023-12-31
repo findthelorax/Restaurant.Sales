@@ -4,7 +4,8 @@ import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 import { DailyTotalsTableRender } from '../dailyTotals/dailyTotalsTableRender';
 import { useGetAllDailyTotals } from '../../hooks/dailyTotals/getAllDailyTotals';
 import { useDeleteDailyTotal } from '../../hooks/dailyTotals/deleteDailyTotal';
-import { DeleteDTButton } from '../deleteButton';
+import { DeleteDailyTotalsButton } from '../deleteButton';
+import { DeleteHeader } from '../dailyTotals/deleteHeader';
 
 const columnNames = {
 	date: 'Date',
@@ -66,18 +67,21 @@ function DailyTotalsTable() {
 	columns.push({
 		headerName: 'Delete',
 		field: 'delete',
-		cellRenderer: DeleteDTButton, // Directly reference the DeleteButton component
-        cellRendererParams: {
-            deleteDailyTotal: (id) => {
-                // Update teamMembers state to remove the deleted daily total
-                setTeamMembers(teamMembers.map(teamMember => ({
-                    ...teamMember,
-                    dailyTotals: teamMember.dailyTotals.filter(dailyTotal => dailyTotal._id !== id)
-                })));
-            },
-        },
+		// headerComponentFramework: DeleteHeader,
+		// cellRenderer: DeleteDailyTotalsButton, // Directly reference the DeleteButton component
 		width: 100,
 	});
+
+	// columns.push({
+	// 	headerName: 'Delete',
+	// 	field: 'delete',
+	// 	cellRenderer: DeleteButton,
+	// 	cellRendererParams: {
+	// 		deleteDailyTotal: deleteDailyTotal,
+	// 	},
+	// 	width: 100,
+	// });
+
 
 	return <DailyTotalsTableRender rows={rows} columns={columns} />;
 }

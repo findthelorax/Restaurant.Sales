@@ -3,11 +3,13 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { DeleteDTButton } from '../../components/deleteButton';
+import { DeleteDailyTotalsButton } from '../deleteButton';
 
 function DailyTotalsTableRender({ rows, columns, frameworkComponents }) {
 	const defaultColDef = {
 		sortable: true,
 		filter: true,
+		menuTabs: ['filterMenuTab'],
 	};
 
 	return (
@@ -16,8 +18,8 @@ function DailyTotalsTableRender({ rows, columns, frameworkComponents }) {
 					rowData={rows}
 					columnDefs={columns}
 					defaultColDef={defaultColDef}
-					frameworkComponents={{ ...frameworkComponents, deleteButton: DeleteDTButton }}
-				/>
+					frameworkComponents={{ ...frameworkComponents, delete: DeleteDailyTotalsButton }}
+					/>
 			</div>
 	);
 }
