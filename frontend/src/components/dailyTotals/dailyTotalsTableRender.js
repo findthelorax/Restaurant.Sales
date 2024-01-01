@@ -39,7 +39,7 @@ function DailyTotalsTableRender({ rows, columns, frameworkComponents }) {
 		<div className="ag-theme-quartz-dark" style={{ height: 400, width: '100%' }}>
 			<AgGridReact
 				{...gridOptions}
-				frameworkComponents={{ ...frameworkComponents, deleteDailyTotal: DeleteDailyTotalsButton }}
+				frameworkComponents={{ ...frameworkComponents }}
 			/>
 		</div>
 	);

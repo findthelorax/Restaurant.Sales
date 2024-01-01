@@ -33,7 +33,7 @@ export function DailyTotalsForm() {
 
 	const handleSelectTeamMember = (event) => {
 		const selectedTeamMemberId = event.target.value;
-		const selectedTeamMember = teamMembers.find(member => member._id === selectedTeamMemberId);
+		const selectedTeamMember = teamMembers.find((member) => member._id === selectedTeamMemberId);
 		setSelectedTeamMember(selectedTeamMember);
 	};
 
@@ -45,7 +45,7 @@ export function DailyTotalsForm() {
 			foodSales,
 			barSales,
 			nonCashTips,
-			cashTips
+			cashTips,
 		};
 
 		submitDailyTotals(selectedTeamMember, dailyTotals);
@@ -69,7 +69,7 @@ export function DailyTotalsForm() {
 						value={selectedTeamMember ? selectedTeamMember._id : ''}
 						label="Team Member"
 						onChange={handleSelectTeamMember}
-						>
+					>
 						<MenuItem value="" disabled>
 							Select Team Member
 						</MenuItem>
@@ -99,7 +99,10 @@ export function DailyTotalsForm() {
 						decimalScale={2}
 						fixedDecimalScale
 						value={field.value}
-						onValueChange={(values) => field.setValue(parseFloat(values.value) || 0)}
+						onValueChange={(values) => {
+							const value = values.value === '' ? '' : parseFloat(values.value) || 0;
+							field.setValue(value);
+						}}
 						fullWidth
 						margin="normal"
 						placeholder={field.label}

@@ -7,7 +7,7 @@ function TeamMemberForm() {
     const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
     const [teamMemberFirstName, setTeamMemberFirstName] = useState('');
     const [teamMemberLastName, setTeamMemberLastName] = useState('');
-    const [position, setPosition] = useState();
+    const [position, setPosition] = useState('');
     const [teamId, setTeamId] = useState([]);
 
     const addTeamMember = useAddTeamMemberToTeam(teamMemberFirstName, teamMemberLastName, position, teamId, teamMembers, setTeamMembers);

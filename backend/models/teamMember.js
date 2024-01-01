@@ -57,7 +57,6 @@ TeamMemberSchema.pre('save', function (next) {
 });
 
 TeamMemberSchema.methods.addDailyTotal = function (dailyTotal) {
-	console.log("🚀 ~ file: teamMember.js:58 ~ dailyTotal:", dailyTotal)
 	// Add the daily total
 	this.dailyTotals.push(dailyTotal);
 

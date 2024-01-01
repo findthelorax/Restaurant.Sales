@@ -8,7 +8,6 @@ import { DeleteDailyTotalsButton } from '../deleteButton';
 import { DeleteHeader } from '../dailyTotals/deleteHeader';
 import { AgGridSearch, AgGridExport, DeleteTMButtonRender } from '../customAgGridHeader';
 
-
 const columnNames = {
 	date: 'Date',
 	foodSales: 'Food Sales',
@@ -49,8 +48,8 @@ function DailyTotalsTable() {
 	);
 
 	const columns = [
-        { field: 'teamMemberFirstName', headerName: 'First Name', pinned: 'left',},
-        { field: 'teamMemberLastName', headerName: 'Last Name'},
+		{ field: 'teamMemberFirstName', headerName: 'First Name', pinned: 'left' },
+		{ field: 'teamMemberLastName', headerName: 'Last Name' },
 		{ field: 'teamMemberPosition', headerName: 'Position', width: 120 },
 		...Object.entries(columnNames).map(([key, name]) => ({
 			field: key,
@@ -69,34 +68,19 @@ function DailyTotalsTable() {
 			headerName: 'Actions',
 			headerComponent: AgGridExport,
 			sortable: false,
-			filter: AgGridSearch,        
+			filter: AgGridSearch,
 			cellRenderer: DeleteDailyTotalsButton,
-			cellRendererParams: {
-				deleteDailyTotal: deleteDailyTotal,
+			cellRendererParams: (params) => {
+				return {
+					deleteDailyTotal: deleteDailyTotal,
+					params: params,
+					refreshData: fetchAllDailyTotals,
+				};
 			},
 		},
 	];
 
-	// columns.push({
-	// 	headerName: 'Delete',
-	// 	field: 'delete',
-	// 	// headerComponentFramework: DeleteHeader,
-	// 	// cellRenderer: DeleteDailyTotalsButton, // Directly reference the DeleteButton component
-	// 	width: 100,
-	// });
-
-	// columns.push({
-	// 	headerName: 'Delete',
-	// 	field: 'delete',
-	// 	cellRenderer: DeleteDailyTotalsButton,
-	// 	cellRendererParams: {
-	// 		deleteDailyTotal: deleteDailyTotal,
-	// 	},
-	// 	width: 100,
-	// });
-
-
-	return <DailyTotalsTableRender rows={rows} columns={columns} />;
+	return <DailyTotalsTableRender rows={rows} columns={columns} frameworkComponents={{ DeleteDailyTotalsButton }} />;
 }
 
 export { DailyTotalsTable };

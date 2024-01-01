@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Modal } from '@mui/material';
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { deleteDailyTotalFromServer } from './../api/salesTotals';
 
 export function DeleteDTButton(props) {
@@ -24,8 +24,7 @@ export function DeleteTMButton(props) {
 	);
 }
 
-export function DeleteDailyTotalsButton({ params }) {
-	console.log('🚀 ~ file: deleteButton.js:28 ~ DeleteDailyTotalsButton ~ params:', params);
+export function DeleteDailyTotalsButton({ params, refreshData }) {
 	const [show, setShow] = React.useState(false);
 
 	const handleClose = () => setShow(false);
@@ -33,8 +32,9 @@ export function DeleteDailyTotalsButton({ params }) {
 
 	const handleDelete = async () => {
 		try {
-			await deleteDailyTotalFromServer(params.data.teamMemberId, params.data.dailyTotalId);
+			await deleteDailyTotalFromServer(params.data.teamMemberId, params.data._id);
 			handleClose();
+			refreshData();
 		} catch (error) {
 			console.error(`Error deleting daily total: ${error.message}`);
 		}
@@ -46,23 +46,21 @@ export function DeleteDailyTotalsButton({ params }) {
 				Delete
 			</Button>
 
-			<Modal show={show} onHide={handleClose}>
-				<Modal.Header closeButton>
-					<Modal.Title>Confirm Delete</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					Are you sure you want to delete the daily total for {params.data.name} ({params.data.position}) on{' '}
+			<Dialog open={show} onClose={handleClose}>
+				<DialogTitle>Confirm Delete</DialogTitle>
+				<DialogContent>
+					Are you sure you want to delete the daily total for {params.data.teamMemberFirstName} {params.data.teamMemberLastName} - {params.data.teamMemberPosition} on {' '}
 					{params.data.date}?
-				</Modal.Body>
-				<Modal.Footer>
+				</DialogContent>
+				<DialogActions>
 					<Button variant="secondary" onClick={handleClose}>
 						Close
 					</Button>
 					<Button variant="primary" onClick={handleDelete}>
 						Confirm Delete
 					</Button>
-				</Modal.Footer>
-			</Modal>
+				</DialogActions>
+			</Dialog>
 		</>
 	);
 }
