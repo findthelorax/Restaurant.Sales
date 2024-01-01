@@ -12,6 +12,7 @@ import { WeeklyTotalsTable } from '../components/weeklyTotals/weeklyTotalsTable'
 import { WeeklyTipsTable } from '../components/weeklyTotals/weeklyTipsTable';
 import { TimePeriodTable } from '../components/salesTables/timePeriodTables';
 import { TeamCards } from '../components/team/teamCard';
+import { TeamTotalsCards } from '../components/team/teamTotalsCard';
 import useTMConfPopup from '../hooks/teamMemberCPopHook';
 import Carousel from '../components/carousel';
 import { StyledGridItem } from '../styles/mainLayoutStyles';
@@ -116,6 +117,9 @@ function Dashboard({ selectedDate }) {
 			</Grid>
 			<Grid item xs={12} sm={6} md={4} lg={4}>
 				<TeamCards />
+			</Grid>
+			<Grid item xs={12} sm={6} md={4} lg={4}>
+				<TeamTotalsCards />
 			</Grid>
 
 			<Grid item xs={12} md={12} lg={12} xl={12}>

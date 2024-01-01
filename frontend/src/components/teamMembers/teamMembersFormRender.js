@@ -17,13 +17,14 @@ function TeamMemberForm({
 	setTeamMemberLastName,
 	position = '',
 	setPosition,
+	teamId,
+	setTeamId,
 	addTeamMember,
 }) {
 	// eslint-disable-next-line
 	const [open, setOpen] = useState(false);
 	// eslint-disable-next-line
 	const { teams, setTeams } = useContext(TeamContext);
-	const [selectedTeam, setSelectedTeam] = useState('');
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
@@ -33,7 +34,7 @@ function TeamMemberForm({
 			firstName: teamMemberFirstName,
 			lastName: teamMemberLastName,
 			position: position,
-			teamId: selectedTeam, // Set the team id to selectedTeam
+			teams: [teamId],
 		};
 
 		// Call addTeamMember with the new team member object
@@ -43,7 +44,7 @@ function TeamMemberForm({
 		setTeamMemberFirstName('');
 		setTeamMemberLastName('');
 		setPosition('');
-		setSelectedTeam('');
+		setTeamId('');
 	};
 
 	return (
@@ -96,10 +97,10 @@ function TeamMemberForm({
 					<Select
 						labelId="teams"
 						id="teams"
-						value={selectedTeam}
+						value={teamId}
 						label="Team"
 						// size="small"
-						onChange={(e) => setSelectedTeam(e.target.value)}
+						onChange={(e) => setTeamId(e.target.value)}
 					>
 						<MenuItem value="" disabled>
 							Select a team
@@ -107,7 +108,7 @@ function TeamMemberForm({
 						{Array.isArray(teams) &&
 							teams.map((team) => (
 								<MenuItem key={team._id} value={team._id}>
-									{team.name}
+									{team.teamName}
 								</MenuItem>
 							))}
 					</Select>

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
+const Schema = mongoose.Schema;
 
 const DailyTotalSchema = new mongoose.Schema({
 	date: Date,
@@ -34,6 +35,7 @@ const TeamMemberSchema = new mongoose.Schema({
     teamMemberFirstName: String,
     teamMemberLastName: String,
     position: String,
+	teams: [{ type: Schema.Types.ObjectId, ref: 'Team' }],
     timeZone: {
         type: String,
         default: 'UTC',

@@ -2,21 +2,21 @@ import React, { useState, useContext } from 'react';
 import { TeamContext } from '../../contexts/TeamContext';
 import { StyledTeamCard, StyledBox, StyledTextField, PinkStyledButton } from '../../styles/mainLayoutStyles';
 
-function TeamForm({ addTeam }) {
+function TeamForm() {
 	const [teamName, setTeamName] = useState('');
-	const { error, setError } = useState(null);
-	const teams = useContext(TeamContext);
+    const [error, setError] = useState(null);
+    const { teams, addTeam: createTeam } = useContext(TeamContext);
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
 		// Check if the team name already exists
-		if (teams.some((team) => team.name.toLowerCase() === teamName.toLowerCase())) {
+		if (teams.some((team) => team.teamName.toLowerCase() === teamName.toLowerCase())) {
 			setError('This team name already exists.');
 			return;
 		}
 
-		addTeam(teamName);
+		createTeam(teamName);
 		setTeamName(''); // Clear the input field
 		setError(null); // Clear any previous error
 	};

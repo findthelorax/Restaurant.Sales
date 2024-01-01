@@ -9,10 +9,8 @@ import {
 	PinkStyledButton,
 } from '../../styles/mainLayoutStyles';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
-// import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
 import { NumericFormat } from 'react-number-format';
 import { useSubmitDailyTotals } from '../../hooks/dailyTotals/submitDailyTotals';
-import { useHandleSubmit } from '../../hooks/dailyTotals/handleSubmitDailyTotals'; 
 
 export function DailyTotalsForm() {
 	const { teamMembers } = useContext(TeamMembersContext);

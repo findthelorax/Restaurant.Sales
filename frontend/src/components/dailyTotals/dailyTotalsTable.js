@@ -6,6 +6,8 @@ import { useGetAllDailyTotals } from '../../hooks/dailyTotals/getAllDailyTotals'
 import { useDeleteDailyTotal } from '../../hooks/dailyTotals/deleteDailyTotal';
 import { DeleteDailyTotalsButton } from '../deleteButton';
 import { DeleteHeader } from '../dailyTotals/deleteHeader';
+import { AgGridSearch, AgGridExport, DeleteTMButtonRender } from '../customAgGridHeader';
+
 
 const columnNames = {
 	date: 'Date',
@@ -62,20 +64,31 @@ function DailyTotalsTable() {
 					  })
 					: moment(data[key]).format('MMM D, YYYY'),
 		})),
+		{
+			field: 'actions',
+			headerName: 'Actions',
+			headerComponent: AgGridExport,
+			sortable: false,
+			filter: AgGridSearch,        
+			cellRenderer: DeleteDailyTotalsButton,
+			cellRendererParams: {
+				deleteDailyTotal: deleteDailyTotal,
+			},
+		},
 	];
-
-	columns.push({
-		headerName: 'Delete',
-		field: 'delete',
-		// headerComponentFramework: DeleteHeader,
-		// cellRenderer: DeleteDailyTotalsButton, // Directly reference the DeleteButton component
-		width: 100,
-	});
 
 	// columns.push({
 	// 	headerName: 'Delete',
 	// 	field: 'delete',
-	// 	cellRenderer: DeleteButton,
+	// 	// headerComponentFramework: DeleteHeader,
+	// 	// cellRenderer: DeleteDailyTotalsButton, // Directly reference the DeleteButton component
+	// 	width: 100,
+	// });
+
+	// columns.push({
+	// 	headerName: 'Delete',
+	// 	field: 'delete',
+	// 	cellRenderer: DeleteDailyTotalsButton,
 	// 	cellRendererParams: {
 	// 		deleteDailyTotal: deleteDailyTotal,
 	// 	},

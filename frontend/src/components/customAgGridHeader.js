@@ -19,6 +19,12 @@ export function AgGridExport({ api }) {
         api.exportDataAsCsv();
     };
 
+    // const exportData = () => {
+    //     const firstRow = api.getDisplayedRowAtIndex(0);
+    //     const fileName = `${firstRow.data.teamMemberFirstName}_${firstRow.data.teamMemberLastName}`; // Replace with your desired filename format
+    //     api.exportDataAsCsv({ fileName });
+    //   };
+
     return (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <span style={{ marginRight: '10px' }}>Actions:</span>

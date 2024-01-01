@@ -1,4 +1,5 @@
 const { TeamMember } = require('../models/database');
+const { Team } = require('../models/database');
 const moment = require('moment');
 require('dotenv').config();
 
@@ -40,16 +41,24 @@ exports.getTeamMember = async (req, res) => {
 };
 
 exports.createTeamMember = async (req, res) => {
-	const { teamMemberFirstName, teamMemberLastName, position } = req.body;
-
+	const { teamMemberFirstName, teamMemberLastName, position, teams } = req.body;
 	if (!teamMemberFirstName || !teamMemberLastName || !position) {
 		return res.status(400).json({ error: 'Both first name, last name and position are required' });
 	}
 
-	const newMember = new TeamMember({ teamMemberFirstName, teamMemberLastName, position });
+	const newMember = new TeamMember({ teamMemberFirstName, teamMemberLastName, position, teams });
 
 	try {
 		const savedMember = await newMember.save();
+
+		// Update the team document
+		const team = await Team.findById(teams[0]); // Assuming teams is an array of team IDs
+		if (!team) {
+			return res.status(404).json({ error: 'Team not found' });
+		}
+		team.teamMembers.push(savedMember._id);
+		await team.save();
+
 		res.status(201).json(savedMember);
 	} catch (error) {
 		if (error.code === 11000) {
@@ -57,13 +66,13 @@ exports.createTeamMember = async (req, res) => {
 				error: `A team member ${teamMemberFirstName} ${teamMemberLastName} - ${position} already exists.`,
 			});
 		} else {
-			res.status(400).send({ message: err.message });
+			res.status(400).send({ message: error.message });
 		}
 	}
 };
 
 exports.updateTeamMember = async (req, res) => {
-	const { teamMemberFirstName, teamMemberLastName, position } = req.body;
+	const { teamMemberFirstName, teamMemberLastName, position, teamId } = req.body;
 	const teamMemberId = req.params.teamMemberId;
 
 	if (!teamMemberFirstName || !teamMemberLastName || !position) {
@@ -73,7 +82,7 @@ exports.updateTeamMember = async (req, res) => {
 	try {
 		const updatedMember = await TeamMember.findByIdAndUpdate(
 			teamMemberId,
-			{ teamMemberFirstName, teamMemberLastName, position },
+			{ teamMemberFirstName, teamMemberLastName, position, teamId },
 			{ new: true }
 		);
 

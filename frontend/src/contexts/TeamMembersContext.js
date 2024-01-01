@@ -1,4 +1,4 @@
-import React, { useContext, createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { getTeamMembers, getTeamMember } from '../api/teamMembers';
 
 export const TeamMembersContext = createContext();

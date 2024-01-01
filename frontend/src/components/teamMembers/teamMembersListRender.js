@@ -36,7 +36,7 @@ function TeamMembersListRender({ teamByPosition, deleteTeamMember }) {
 		},
 		{ field: 'position', headerName: 'Position', width: 130, filter: 'agTextColumnFilter' },
 		{ field: 'phoneNumber', headerName: 'Phone Number', filter: 'agNumberColumnFilter' },
-		{ field: 'email', headerName: 'Email' },
+		{ field: 'email', headerName: 'Email', filter: 'agTextColumnFilter'},
 		{
 			field: 'actions',
 			headerName: 'Actions',
