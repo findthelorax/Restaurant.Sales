@@ -12,6 +12,7 @@ import { WeeklyTotalsTable } from '../components/weeklyTotals/weeklyTotalsTable'
 import { WeeklyTipsTable } from '../components/weeklyTotals/weeklyTipsTable';
 import { TimePeriodTable } from '../components/salesTables/timePeriodTables';
 import { TeamCards } from '../components/team/teamCard';
+import { TeamTotalsCards } from '../components/team/teamTotalsCard';
 import useTMConfPopup from '../hooks/teamMemberCPopHook';
 import Carousel from '../components/carousel';
 import { StyledGridItem } from '../styles/mainLayoutStyles';
@@ -74,7 +75,7 @@ function Dashboard({ selectedDate }) {
 			<Grid item xs={12} sx={{ mb: -2.25 }}>
 				<Typography variant="h5">Team Members</Typography>
 			</Grid>
-			<Grid container item xs={12} sm={12} md={6} lg={4} display="flex" gap={3}>
+			<Grid container item xs={12} sm={12} md={12} lg={12} xl={6} display="flex" flexDirection="row" gap={3}>
 				<Grid item display="flex" flexDirection="column" gap={2}>
 					<TeamForm />
 					<TeamMemberForm />
@@ -116,6 +117,9 @@ function Dashboard({ selectedDate }) {
 			</Grid>
 			<Grid item xs={12} sm={6} md={4} lg={4}>
 				<TeamCards />
+			</Grid>
+			<Grid item xs={12} sm={6} md={4} lg={4}>
+				<TeamTotalsCards />
 			</Grid>
 
 			<Grid item xs={12} md={12} lg={12} xl={12}>

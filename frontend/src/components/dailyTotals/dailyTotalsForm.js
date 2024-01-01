@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import moment from 'moment';
 import { InputLabel, Select, MenuItem } from '@mui/material';
 import {
 	StyledDTFCard,
@@ -8,23 +9,20 @@ import {
 	PinkStyledButton,
 } from '../../styles/mainLayoutStyles';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
-import { DailyTotalsContext } from '../../contexts/DailyTotalsContext';
-import { CalculateTipOuts } from '../../hooks/tipOuts';
 import { NumericFormat } from 'react-number-format';
-import moment from 'moment';
-import { useUpdateTeamMemberTipOuts } from '../../hooks/updateTeamMemberTipOuts';
+import { useSubmitDailyTotals } from '../../hooks/dailyTotals/submitDailyTotals';
 
 export function DailyTotalsForm() {
 	const { teamMembers } = useContext(TeamMembersContext);
-	const { submitDailyTotalToServer } = useContext(DailyTotalsContext);
-	const [selectedTeamMember, setSelectedTeamMember] = useState('');
+	// const { submitDailyTotalToServer } = useContext(DailyTotalsContext);
+	const [selectedTeamMember, setSelectedTeamMember] = useState(null);
 	const today = moment().format('YYYY-MM-DD');
 	const [date, setDate] = useState(today);
 	const [foodSales, setFoodSales] = useState('');
 	const [barSales, setBarSales] = useState('');
 	const [nonCashTips, setNonCashTips] = useState('');
 	const [cashTips, setCashTips] = useState('');
-	const updateTeamMemberTipOuts = useUpdateTeamMemberTipOuts();
+	const submitDailyTotals = useSubmitDailyTotals();
 
 	const fields = [
 		{ id: 'foodSales', label: 'Food Sales', value: foodSales, setValue: setFoodSales },
@@ -33,34 +31,27 @@ export function DailyTotalsForm() {
 		{ id: 'cashTips', label: 'Cash Tips', value: cashTips, setValue: setCashTips },
 	];
 
+	const handleSelectTeamMember = (event) => {
+		const selectedTeamMemberId = event.target.value;
+		const selectedTeamMember = teamMembers.find(member => member._id === selectedTeamMemberId);
+		setSelectedTeamMember(selectedTeamMember);
+	};
+
 	const handleSubmit = (event) => {
 		event.preventDefault();
 
-		const newDailyTotal = {
-			teamMemberId: selectedTeamMember,
-			date: date,
-			foodSales: parseFloat(foodSales) || 0,
-			barSales: parseFloat(barSales) || 0,
-			nonCashTips: parseFloat(nonCashTips) || 0,
-			cashTips: parseFloat(cashTips) || 0,
+		const dailyTotals = {
+			date,
+			foodSales,
+			barSales,
+			nonCashTips,
+			cashTips
 		};
-		const tipOuts = CalculateTipOuts(newDailyTotal, selectedTeamMember, teamMembers);
-		console.log("🚀 ~ file: dailyTotalsForm.js:46 ~ handleSubmit ~ teamMembers:", teamMembers)
-		console.log("🚀 ~ file: dailyTotalsForm.js:46 ~ handleSubmit ~ selectedTeamMember:", selectedTeamMember)
-		console.log("🚀 ~ file: dailyTotalsForm.js:46 ~ handleSubmit ~ newDailyTotal:", newDailyTotal)
-		console.log('🚀 ~ file: dailyTotalsForm.js:46 ~ handleSubmit ~ tipOuts:', tipOuts);
 
-		// try {
-		//     // Include the calculated tip outs when you submit the daily totals
-		//     const data = submitDailyTotalToServer({tipOuts: tipOuts, ...otherFields }, selectedTeamMember);
-		//     console.log('Success:', data);
-		// } catch (error) {
-		//     console.error('Error:', error);
-		// }
+		submitDailyTotals(selectedTeamMember, dailyTotals);
 
-		submitDailyTotalToServer(newDailyTotal);
-		updateTeamMemberTipOuts(date, position, tipOut, dailyTotals);
 		setSelectedTeamMember('');
+		setDate(today);
 		setFoodSales('');
 		setBarSales('');
 		setNonCashTips('');
@@ -75,10 +66,10 @@ export function DailyTotalsForm() {
 					<Select
 						labelId="selectedTeamMember"
 						id="selectedTeamMember"
-						value={selectedTeamMember}
+						value={selectedTeamMember ? selectedTeamMember._id : ''}
 						label="Team Member"
-						onChange={(e) => setSelectedTeamMember(e.target.value)}
-					>
+						onChange={handleSelectTeamMember}
+						>
 						<MenuItem value="" disabled>
 							Select Team Member
 						</MenuItem>
@@ -108,7 +99,7 @@ export function DailyTotalsForm() {
 						decimalScale={2}
 						fixedDecimalScale
 						value={field.value}
-						onValueChange={(values) => field.setValue(values.value || 0)}
+						onValueChange={(values) => field.setValue(parseFloat(values.value) || 0)}
 						fullWidth
 						margin="normal"
 						placeholder={field.label}

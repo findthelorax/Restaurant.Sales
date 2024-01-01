@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { addTeamMember, deleteTeamMember } from '../api/teamMembers';
 import { ErrorContext } from '../contexts/ErrorContext';
 
-export const useAddTeamMemberToTeam = (teamMemberFirstName, teamMemberLastName, position, teamMembers, setTeamMembers, clearInputs) => {
+export const useAddTeamMemberToTeam = (teamMemberFirstName, teamMemberLastName, position, teams, teamMembers, setTeamMembers) => {
 	const { showError } = useContext(ErrorContext);
 
 	return async () => {
@@ -17,9 +17,8 @@ export const useAddTeamMemberToTeam = (teamMemberFirstName, teamMemberLastName, 
 					showError('A member with this name and position already exists.');
 					return;
 				}
-				const newMember = await addTeamMember(teamMemberFirstName, teamMemberLastName, position);
+				const newMember = await addTeamMember(teamMemberFirstName, teamMemberLastName, position, teams);
 				setTeamMembers((prevTeamMembers) => [...prevTeamMembers, newMember]);
-				clearInputs();
 			} catch (error) {
 				showError(`Failed to add team member: ${error.message}`);
 			}

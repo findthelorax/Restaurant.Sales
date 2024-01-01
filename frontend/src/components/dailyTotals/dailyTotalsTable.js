@@ -2,9 +2,12 @@ import React, { useContext, useEffect } from 'react';
 import moment from 'moment';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 import { DailyTotalsTableRender } from '../dailyTotals/dailyTotalsTableRender';
-import { useGetAllDailyTotals } from '../../hooks/getAllDailyTotals';
-import { useDeleteDailyTotal } from '../../hooks/deleteDailyTotal';
-import { DeleteDTButton } from '../deleteButton';
+import { useGetAllDailyTotals } from '../../hooks/dailyTotals/getAllDailyTotals';
+import { useDeleteDailyTotal } from '../../hooks/dailyTotals/deleteDailyTotal';
+import { DeleteDailyTotalsButton } from '../deleteButton';
+import { DeleteHeader } from '../dailyTotals/deleteHeader';
+import { AgGridSearch, AgGridExport, DeleteTMButtonRender } from '../customAgGridHeader';
+
 
 const columnNames = {
 	date: 'Date',
@@ -61,23 +64,37 @@ function DailyTotalsTable() {
 					  })
 					: moment(data[key]).format('MMM D, YYYY'),
 		})),
+		{
+			field: 'actions',
+			headerName: 'Actions',
+			headerComponent: AgGridExport,
+			sortable: false,
+			filter: AgGridSearch,        
+			cellRenderer: DeleteDailyTotalsButton,
+			cellRendererParams: {
+				deleteDailyTotal: deleteDailyTotal,
+			},
+		},
 	];
 
-	columns.push({
-		headerName: 'Delete',
-		field: 'delete',
-		cellRenderer: DeleteDTButton, // Directly reference the DeleteButton component
-        cellRendererParams: {
-            deleteDailyTotal: (id) => {
-                // Update teamMembers state to remove the deleted daily total
-                setTeamMembers(teamMembers.map(teamMember => ({
-                    ...teamMember,
-                    dailyTotals: teamMember.dailyTotals.filter(dailyTotal => dailyTotal._id !== id)
-                })));
-            },
-        },
-		width: 100,
-	});
+	// columns.push({
+	// 	headerName: 'Delete',
+	// 	field: 'delete',
+	// 	// headerComponentFramework: DeleteHeader,
+	// 	// cellRenderer: DeleteDailyTotalsButton, // Directly reference the DeleteButton component
+	// 	width: 100,
+	// });
+
+	// columns.push({
+	// 	headerName: 'Delete',
+	// 	field: 'delete',
+	// 	cellRenderer: DeleteDailyTotalsButton,
+	// 	cellRendererParams: {
+	// 		deleteDailyTotal: deleteDailyTotal,
+	// 	},
+	// 	width: 100,
+	// });
+
 
 	return <DailyTotalsTableRender rows={rows} columns={columns} />;
 }

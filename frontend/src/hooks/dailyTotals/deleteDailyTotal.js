@@ -1,7 +1,7 @@
 import { useCallback, useContext } from 'react';
-import { TeamMembersContext } from '../contexts/TeamMembersContext'; // import TeamContext
-import { deleteDailyTotalFromServer } from '../api/salesTotals';
-import { FormattedDate } from '../hooks/formatDate';
+import { TeamMembersContext } from '../../contexts/TeamMembersContext'; // import TeamContext
+import { deleteDailyTotalFromServer } from '../../api/salesTotals';
+import { FormattedDate } from '../formatDate';
 
 export const useDeleteDailyTotal = (fetchAllDailyTotals, setRefreshDailyTotals) => {
     const { teamMembers, setTeamMembers } = useContext(TeamMembersContext); // use setTeam from TeamContext
@@ -35,6 +35,7 @@ export const useDeleteDailyTotal = (fetchAllDailyTotals, setRefreshDailyTotals) 
                             : member
                     );
                     setTeamMembers(newTeamMembers); // set the new team array
+                    console.log("🚀 ~ file: deleteDailyTotal.js:40 ~ newTeamMembers:", newTeamMembers)
                     fetchAllDailyTotals();
                 }
             } catch (error) {

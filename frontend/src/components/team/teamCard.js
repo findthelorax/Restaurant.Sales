@@ -12,8 +12,8 @@ export const TeamCard = ({ team, isFocused }) => {
     return (
         <StyledCard className={isFocused ? 'focused' : ''}>
             <CardContent>
-                <Avatar src={team.avatar} alt={team.name} />
-                <Typography variant="h5">{team.name}</Typography>
+                <Avatar src={team.avatar} alt={team.teamName} />
+                <Typography variant="h5">{team.teamName}</Typography>
                 <Typography variant="body2">{team.teamMembers && team.teamMembers.length} members</Typography>
                 <Badge badgeContent={4} color="primary">
                     <Chip label="Team Chip" />

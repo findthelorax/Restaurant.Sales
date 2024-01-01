@@ -8,15 +8,9 @@ function TeamMemberForm() {
     const [teamMemberFirstName, setTeamMemberFirstName] = useState('');
     const [teamMemberLastName, setTeamMemberLastName] = useState('');
     const [position, setPosition] = useState();
+    const [teamId, setTeamId] = useState([]);
 
-    const clearInputs = () => {
-        setTeamMemberFirstName('');
-        setTeamMemberLastName('');
-        setPosition('');
-    };
-    
-    const addTeamMember = useAddTeamMemberToTeam(teamMemberFirstName, teamMemberLastName, position, teamMembers, setTeamMembers, clearInputs);
-
+    const addTeamMember = useAddTeamMemberToTeam(teamMemberFirstName, teamMemberLastName, position, teamId, teamMembers, setTeamMembers);
     return (
         <TeamMemberFormRender
             teamMemberFirstName={teamMemberFirstName}
@@ -25,6 +19,8 @@ function TeamMemberForm() {
             setTeamMemberLastName={setTeamMemberLastName}
             position={position}
             setPosition={setPosition}
+            teamId={teamId}
+            setTeamId={setTeamId}
             addTeamMember={addTeamMember}
         />
     );

@@ -1,12 +1,13 @@
 import axios from 'axios';
 
 //* Team Members
-export const addTeamMember = async (teamMemberFirstName, teamMemberLastName, position) => {
+export const addTeamMember = async (teamMemberFirstName, teamMemberLastName, position, teamId) => {
     try {
         const response = await axios.post(`${process.env.REACT_APP_SERVER_URL}/teamMembers`, {
             teamMemberFirstName,
             teamMemberLastName,
             position,
+			teams: [teamId],
         });
         return response.data;
     } catch (error) {
