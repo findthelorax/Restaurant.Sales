@@ -2,12 +2,9 @@ import React, { useContext, useEffect } from 'react';
 import moment from 'moment';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 import { DailyTotalsTableRender } from '../dailyTotals/dailyTotalsTableRender';
-import { useGetAllTeamMembers } from '../../hooks/teamMembers/getAllTeamMembers';
-import { useGetAllDailyTotals } from '../../hooks/dailyTotals/getAllDailyTotals';
 import { useDeleteDailyTotal } from '../../hooks/dailyTotals/deleteDailyTotal';
 import { DeleteDailyTotalsButton } from '../deleteButton';
-import { DeleteHeader } from '../dailyTotals/deleteHeader';
-import { AgGridSearch, AgGridExport, DeleteTMButtonRender } from '../customAgGridHeader';
+import { AgGridSearch, AgGridExport } from '../customAgGridHeader';
 
 const columnNames = {
 	date: 'Date',
@@ -25,8 +22,6 @@ const columnNames = {
 
 function DailyTotalsTable() {
 	const deleteDailyTotal = useDeleteDailyTotal();
-	// const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
-	const { fetchAllDailyTotals } = useGetAllDailyTotals();
 	const { teamMembers, fetchTeamMembers } = useContext(TeamMembersContext);
 
 	useEffect(() => {
@@ -35,7 +30,7 @@ function DailyTotalsTable() {
 
 	const rows = teamMembers.flatMap((teamMember) =>
 		teamMember.dailyTotals.map((dailyTotal) => {
-			const localDate = moment.utc(dailyTotal.date).add(moment().utcOffset(), 'minutes').format('MMM D, YYYY');
+			const localDate = moment.utc(dailyTotal.date).format('MMM D, YYYY');
 			return {
 				teamMemberId: teamMember._id,
 				_id: dailyTotal._id,
@@ -61,7 +56,7 @@ function DailyTotalsTable() {
 							style: 'currency',
 							currency: 'USD',
 					  })
-					: moment(data[key]).format('MMM D, YYYY'),
+					: moment.utc(data[key]).format('MMM D, YYYY'),
 		})),
 		{
 			field: 'actions',

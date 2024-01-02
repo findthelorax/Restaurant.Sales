@@ -1,60 +1,102 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { Grid, Snackbar } from '@mui/material';
+import Alert from '@mui/material/Alert';
 import { AddToScheduleForm } from '../../components/teamMembers/workScheduleForm';
-import MyCalendar from '../../components/teamMembers/workScheduleCalendar';
 import { getWorkSchedule, createWorkSchedule } from '../../api/teamMembers';
+import { TeamMembersContext } from '../../contexts/TeamMembersContext';
+import moment from 'moment';
 
 const SchedulePage = () => {
+	const { teamMembers } = useContext(TeamMembersContext);
 	const [events, setEvents] = useState([]);
+	const [open, setOpen] = useState(false);
+	const [alert, setAlert] = useState('');
+	const [successOpen, setSuccessOpen] = useState(false);
+	const [successMessage, setSuccessMessage] = useState('');
 
-    useEffect(() => {
-        getWorkSchedule().then((workSchedules) => {
-            if (!Array.isArray(workSchedules)) {
-                console.error('Expected workSchedules to be an array, got', workSchedules);
-                return;
-            }
-    
-            const events = workSchedules.flatMap((workSchedule) => {
-                if (!Array.isArray(workSchedule.dates)) {
-                    console.error('Expected workSchedule.dates to be an array, got', workSchedule.dates);
-                    return [];
-                }
-    
-                return workSchedule.dates.map((date) => ({
-                    start: new Date(date),
-                    end: new Date(date),
-                    title: `${workSchedule.teamMemberFirstName} ${workSchedule.teamMemberLastName} - ${workSchedule.position}`,
-                }));
-            });
-    
-            setEvents(events);
-        });
-    }, []);
+	useEffect(() => {
+		Promise.all(
+			teamMembers.map((member) =>
+				getWorkSchedule(member._id).then((workSchedule) => ({
+					...workSchedule,
+					teamMemberFirstName: member.teamMemberFirstName,
+					teamMemberLastName: member.teamMemberLastName,
+				}))
+			)
+		).then((workSchedules) => {
+			const events = workSchedules.flatMap((workSchedule) => {
+				if (!workSchedule.workSchedule) {
+					console.warn(
+						`No work schedule for team member ${workSchedule.teamMemberFirstName} ${workSchedule.teamMemberLastName}`
+					);
+					return [];
+				}
+
+				if (!Array.isArray(workSchedule.workSchedule)) {
+					console.error('Expected workSchedule.workSchedule to be an array, got', workSchedule.workSchedule);
+					return [];
+				}
+
+				return workSchedule.workSchedule.map((date) => ({
+					start: moment(date).toDate(),
+					end: moment(date).toDate(),
+					title: `${workSchedule.teamMemberFirstName} ${workSchedule.teamMemberLastName} - ${workSchedule.position}`,
+				}));
+			});
+
+			setEvents(events);
+		});
+	}, [teamMembers]);
 
 	const handleAddToSchedule = async (teamMember, date) => {
-		// add the new work date to the schedule
-		// then update the events state
 		if (teamMember && date) {
-			try {
-				await createWorkSchedule(teamMember._id, [date]);
-				setEvents((prevEvents) => [
-					...prevEvents,
-					{
-						start: new Date(date),
-						end: new Date(date),
-						title: `${teamMember.teamMemberFirstName} ${teamMember.teamMemberLastName} - ${teamMember.position}`,
-					},
-				]);
-			} catch (error) {
-				console.error(`Error creating work schedule: ${error.message}`, error);
+			const alreadyScheduled = events.some(
+				(event) =>
+					moment(event.start).isSame(moment(date), 'day') &&
+					event.title.includes(`${teamMember.teamMemberFirstName} ${teamMember.teamMemberLastName}`)
+			);
+
+			if (alreadyScheduled) {
+				setAlert(
+					`${teamMember.teamMemberFirstName} ${teamMember.teamMemberLastName} is already scheduled for this day.`
+				);
+				setOpen(true);
+			} else {
+				try {
+					await createWorkSchedule(teamMember._id, [date]);
+					setEvents((prevEvents) => [
+						...prevEvents,
+						{
+							start: moment(date).toDate(),
+							end: moment(date).toDate(),
+							title: `${teamMember.teamMemberFirstName} ${teamMember.teamMemberLastName} - ${teamMember.position}`,
+						},
+					]);
+					setSuccessMessage(`${teamMember.teamMemberFirstName} ${teamMember.teamMemberLastName} has been scheduled.`);
+					setSuccessOpen(true);
+				} catch (error) {
+					console.error(`Error creating work schedule: ${error.message}`, error);
+				}
 			}
 		}
 	};
 
 	return (
-		<div>
-			<AddToScheduleForm onAddToSchedule={handleAddToSchedule} />
-			<MyCalendar events={events} setEvents={setEvents} />
-		</div>
+		<Grid container spacing={3}>
+			<Grid item xs={12} md={6}>
+				<AddToScheduleForm onAddToSchedule={handleAddToSchedule} />
+			</Grid>
+			<Snackbar open={successOpen} autoHideDuration={6000} onClose={() => setSuccessOpen(false)}>
+				<Alert onClose={() => setSuccessOpen(false)} severity="success" sx={{ width: '100%' }}>
+					{successMessage}
+				</Alert>
+			</Snackbar>
+			<Snackbar open={open} autoHideDuration={6000} onClose={() => setOpen(false)}>
+				<Alert onClose={() => setOpen(false)} severity="error" sx={{ width: '100%' }}>
+					{alert}
+				</Alert>
+			</Snackbar>
+		</Grid>
 	);
 };
 

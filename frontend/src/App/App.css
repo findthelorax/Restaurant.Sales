@@ -7,6 +7,17 @@
   pointer-events: none;
 }
 
+@font-face {
+  font-family: 'InterVariable';
+  src: url('../assets/Inter/Inter-VariableFont.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: oblique 0deg 10deg;
+}
+
+/* body {
+  font-family: 'InterVariable', sans-serif;
+} */
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

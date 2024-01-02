@@ -13,7 +13,6 @@ import { WeeklyTipsTable } from '../components/weeklyTotals/weeklyTipsTable';
 import { TimePeriodTable } from '../components/salesTables/timePeriodTables';
 import { TeamCards } from '../components/team/teamCard';
 import { TeamTotalsCards } from '../components/team/teamTotalsCard';
-import { AddToScheduleForm } from '../components/teamMembers/workScheduleForm';
 import useTMConfPopup from '../hooks/teamMemberCPopHook';
 import Carousel from '../components/carousel';
 import { StyledGridItem } from '../styles/mainLayoutStyles';
@@ -83,9 +82,6 @@ function Dashboard({ selectedDate }) {
 				</Grid>
 				<Grid item style={{ marginLeft: '20px' }}>
 					<DailyTotalsForm />
-				</Grid>
-				<Grid item style={{ marginLeft: '20px' }}>
-					<AddToScheduleForm />
 				</Grid>
 			</Grid>
 

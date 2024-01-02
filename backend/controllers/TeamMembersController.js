@@ -545,7 +545,7 @@ exports.createWorkSchedule = async (req, res) => {
 exports.getWorkSchedule = async (req, res) => {
 	try {
 		const teamMember = await TeamMember.findById(req.params.teamMemberId);
-		res.json(teamMember.workSchedule);
+		res.json({ workSchedule: teamMember.workSchedule });
 	} catch (err) {
 		res.json({ message: err });
 	}

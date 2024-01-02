@@ -82,11 +82,14 @@ export function DailyTotalsForm() {
 				</StyledFormControl>
 				<StyledTextField
 					id="date"
-					label="Date"
+					label=""
 					type="date"
 					value={date}
 					onChange={(e) => setDate(e.target.value)}
 					fullWidth
+					InputLabelProps={{
+						shrink: true,
+					}}
 				/>
 				{fields.map((field) => (
 					<NumericFormat

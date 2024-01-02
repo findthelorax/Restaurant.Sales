@@ -51,8 +51,7 @@ export function DeleteDailyTotalsButton({ params }) {
 			<Dialog open={show} onClose={handleClose}>
 				<DialogTitle>Confirm Delete</DialogTitle>
 				<DialogContent>
-					Are you sure you want to delete the daily total for {params.data.teamMemberFirstName}{' '}
-					{params.data.teamMemberLastName} - {params.data.teamMemberPosition} on {params.data.date}?
+					Are you sure you want to delete the daily total for {params.data.teamMemberName} - {params.data.teamMemberPosition} on {params.data.date}?
 				</DialogContent>
 				<DialogActions>
 					<Button variant="secondary" onClick={handleClose}>
