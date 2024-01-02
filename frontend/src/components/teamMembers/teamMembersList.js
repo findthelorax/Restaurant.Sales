@@ -8,24 +8,24 @@ function TeamMembersList() {
 	const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
 	const deleteTeamMember = useDeleteTeamMemberFromTeam(setTeamMembers);
 
-	const teamByPosition = useMemo(() => {
-		const teamByPosition = POSITIONS.reduce((acc, position) => {
+	const teamMemberByPosition = useMemo(() => {
+		const teamMemberByPosition = POSITIONS.reduce((acc, position) => {
 			acc[position] = [];
 			return acc;
 		}, {});
 
-		teamByPosition['other'] = [];
+		teamMemberByPosition['other'] = [];
 
 		teamMembers.forEach((member) => {
-			if (member.position && teamByPosition.hasOwnProperty(member.position)) {
-				teamByPosition[member.position].push(member);
+			if (member.position && teamMemberByPosition.hasOwnProperty(member.position)) {
+				teamMemberByPosition[member.position].push(member);
 			} else {
-				teamByPosition['other'].push(member);
+				teamMemberByPosition['other'].push(member);
 			}
 		});
 
         return Object.fromEntries(
-            Object.entries(teamByPosition).map(([position, members]) => [
+            Object.entries(teamMemberByPosition).map(([position, members]) => [
                 position,
                 [...members].sort((a, b) => {
                     // Check if teamMemberFirstName and teamMemberLastName exist before comparing
@@ -46,7 +46,7 @@ function TeamMembersList() {
         );
     }, [teamMembers]);
 
-	return <TeamMembersListRender teamByPosition={teamByPosition} deleteTeamMember={deleteTeamMember} />;
+	return <TeamMembersListRender teamMemberByPosition={teamMemberByPosition} deleteTeamMember={deleteTeamMember} />;
 }
 
 export default TeamMembersList;

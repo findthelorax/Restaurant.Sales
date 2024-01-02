@@ -7,6 +7,7 @@ import Dashboard from './Dashboard';
 import SettingsPage from './Settings';
 import DatabasePage from '../pages/database/databasePage';
 import TeamMembersPage from '../pages/teamMembers/teamMembersPage';
+import SchedulePage from './schedule/schedulePage';
 // import { Outlet } from 'react-router-dom';
 // import { useAuth } from '../../contexts/AuthContext';
 
@@ -37,6 +38,8 @@ function MainLayout() {
 				return <DatabasePage />;
 			case 'Settings':
 				return <SettingsPage />;
+			case 'Schedule':
+				return <SchedulePage />;
 			default:
 				return null;
 		}

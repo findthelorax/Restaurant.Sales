@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { TeamMembersContext } from '../contexts/TeamMembersContext';
 import { deleteDailyTotalFromServer } from './../api/salesTotals';
 
 export function DeleteDTButton(props) {
@@ -24,7 +25,8 @@ export function DeleteTMButton(props) {
 	);
 }
 
-export function DeleteDailyTotalsButton({ params, refreshData }) {
+export function DeleteDailyTotalsButton({ params }) {
+	const { fetchTeamMembers } = useContext(TeamMembersContext);
 	const [show, setShow] = React.useState(false);
 
 	const handleClose = () => setShow(false);
@@ -34,7 +36,7 @@ export function DeleteDailyTotalsButton({ params, refreshData }) {
 		try {
 			await deleteDailyTotalFromServer(params.data.teamMemberId, params.data._id);
 			handleClose();
-			refreshData();
+			fetchTeamMembers();
 		} catch (error) {
 			console.error(`Error deleting daily total: ${error.message}`);
 		}
@@ -42,21 +44,21 @@ export function DeleteDailyTotalsButton({ params, refreshData }) {
 
 	return (
 		<>
-			<Button variant="danger" onClick={handleShow}>
+			<Button variant="danger" sx={{ bgcolor: 'error.main', color: 'white' }} onClick={handleShow}>
 				Delete
 			</Button>
 
 			<Dialog open={show} onClose={handleClose}>
 				<DialogTitle>Confirm Delete</DialogTitle>
 				<DialogContent>
-					Are you sure you want to delete the daily total for {params.data.teamMemberFirstName} {params.data.teamMemberLastName} - {params.data.teamMemberPosition} on {' '}
-					{params.data.date}?
+					Are you sure you want to delete the daily total for {params.data.teamMemberFirstName}{' '}
+					{params.data.teamMemberLastName} - {params.data.teamMemberPosition} on {params.data.date}?
 				</DialogContent>
 				<DialogActions>
 					<Button variant="secondary" onClick={handleClose}>
 						Close
 					</Button>
-					<Button variant="primary" onClick={handleDelete}>
+					<Button variant="primary" sx={{ bgcolor: 'error.main', color: 'white' }} onClick={handleDelete}>
 						Confirm Delete
 					</Button>
 				</DialogActions>

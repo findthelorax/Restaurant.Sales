@@ -5,9 +5,10 @@ import { AiOutlineDashboard } from 'react-icons/ai';
 import { RiTeamLine } from 'react-icons/ri';
 import { GiMoneyStack } from 'react-icons/gi';
 import { BsCalendar2Month } from 'react-icons/bs';
-import { GiCalendarHalfYear } from 'react-icons/gi';
+import { FcCalendar } from "react-icons/fc";
 import { TbDatabaseCog } from 'react-icons/tb';
 import { FiSettings } from 'react-icons/fi';
+import { BsCalendar2Date } from "react-icons/bs";
 import { StyledListSubheader, StyledListItemIcon } from '../../../styles/mainLayoutStyles';
 
 export const MainListItems = ({ setSelectedMenu }) => (
@@ -24,6 +25,12 @@ export const MainListItems = ({ setSelectedMenu }) => (
 				<RiTeamLine />
 			</StyledListItemIcon>
 			<ListItemText primary="Team Members" />
+		</ListItemButton>
+		<ListItemButton onClick={() => setSelectedMenu('Schedule')}>
+			<StyledListItemIcon>
+				<BsCalendar2Date />
+			</StyledListItemIcon>
+			<ListItemText primary="Schedule" />
 		</ListItemButton>
 		<ListItemButton onClick={() => setSelectedMenu('Totals')}>
 			<StyledListItemIcon>
@@ -45,7 +52,7 @@ export const SecondaryListItems = ({ setSelectedMenu }) => (
 		</ListItemButton>
 		<ListItemButton onClick={() => setSelectedMenu('Yearly Sales')}>
 			<StyledListItemIcon>
-				<GiCalendarHalfYear />
+				<FcCalendar />
 			</StyledListItemIcon>
 			<ListItemText primary="Yearly Sales" />
 		</ListItemButton>

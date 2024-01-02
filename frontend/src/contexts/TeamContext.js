@@ -10,6 +10,15 @@ export const TeamContextProvider = props => {
         getTeams().then(setTeams);
     }, []);
 
+    const getTeamNameFromId = (teamId) => {
+        console.log("🚀 ~ file: TeamContext.js:14 ~ getTeamNameFromId ~ teamId:", teamId)
+        const team = teams.find(team => {
+            console.log("🚀 ~ file: TeamContext.js:16 ~ getTeamNameFromId ~ team:", team)
+            return team._id === teamId
+        })
+        return team ? team.teamName : 'Unknown';
+    };
+
     const createTeam = async (teamName) => {
         const newTeam = await addTeam(teamName);
         setTeams(prevTeams => [...prevTeams, newTeam]);
@@ -42,7 +51,8 @@ export const TeamContextProvider = props => {
             deleteTeam: removeTeam, 
             updateTeam: updateTeamData, 
             addTeamMemberToTeam: addExistingTeamMemberToTeam, 
-            removeTeamMemberFromTeam: removeExistingTeamMemberFromTeam 
+            removeTeamMemberFromTeam: removeExistingTeamMemberFromTeam,
+            getTeamNameFromId
         }}>
             {props.children}
         </TeamContext.Provider>

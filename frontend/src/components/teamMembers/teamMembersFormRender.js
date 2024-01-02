@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { InputLabel, Select, MenuItem, Button, ButtonGroup, Grid } from '@mui/material';
+import { InputLabel, Select, MenuItem, Button, ButtonGroup, Grid, Snackbar, Alert } from '@mui/material';
 import { POSITIONS } from '../../utils/constraints';
 import {
 	StyledTMCard,
@@ -25,8 +25,9 @@ function TeamMemberForm({
 	const [open, setOpen] = useState(false);
 	// eslint-disable-next-line
 	const { teams, setTeams } = useContext(TeamContext);
+	const [submitStatus, setSubmitStatus] = useState(null);
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
 
 		// Create a new team member object
@@ -37,9 +38,13 @@ function TeamMemberForm({
 			teams: [teamId],
 		};
 
-		// Call addTeamMember with the new team member object
-		addTeamMember(newTeamMember);
-
+		try {
+			// Call addTeamMember with the new team member object
+			await addTeamMember(newTeamMember);
+			setSubmitStatus('success');
+		} catch (error) {
+			setSubmitStatus('error');
+		}
 		// Clear the form fields
 		setTeamMemberFirstName('');
 		setTeamMemberLastName('');
@@ -71,7 +76,7 @@ function TeamMemberForm({
 					// size="small"
 				/>
 				<StyledFormControl fullWidth margin="normal">
-					<Grid container spacing={1} mt={.5} mb={1}>
+					<Grid container spacing={1} mt={0.5} mb={1}>
 						{POSITIONS.map((pos, index) => (
 							<Grid item xs={6} key={pos}>
 								<Button
@@ -109,6 +114,15 @@ function TeamMemberForm({
 				<PinkStyledButton variant="contained" color="primary" type="submit" sx={{ mt: 2 }}>
 					Add Team Member
 				</PinkStyledButton>
+				<Snackbar open={submitStatus !== null} autoHideDuration={6000} onClose={() => setSubmitStatus(null)}>
+					<Alert
+						onClose={() => setSubmitStatus(null)}
+						severity={submitStatus || 'info'}
+						sx={{ width: '100%' }}
+					>
+						{submitStatus === 'success' ? 'Team Member Added!' : 'Failed!'}
+					</Alert>
+				</Snackbar>
 			</StyledBox>
 		</StyledTMCard>
 	);

@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from 'react';
 import moment from 'moment';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 import { DailyTotalsTableRender } from '../dailyTotals/dailyTotalsTableRender';
+import { useGetAllTeamMembers } from '../../hooks/teamMembers/getAllTeamMembers';
 import { useGetAllDailyTotals } from '../../hooks/dailyTotals/getAllDailyTotals';
 import { useDeleteDailyTotal } from '../../hooks/dailyTotals/deleteDailyTotal';
 import { DeleteDailyTotalsButton } from '../deleteButton';
@@ -24,12 +25,13 @@ const columnNames = {
 
 function DailyTotalsTable() {
 	const deleteDailyTotal = useDeleteDailyTotal();
-	const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
+	// const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
 	const { fetchAllDailyTotals } = useGetAllDailyTotals();
+	const { teamMembers, fetchTeamMembers } = useContext(TeamMembersContext);
 
 	useEffect(() => {
-		fetchAllDailyTotals();
-	}, [fetchAllDailyTotals]);
+		fetchTeamMembers();
+	}, [fetchTeamMembers]);
 
 	const rows = teamMembers.flatMap((teamMember) =>
 		teamMember.dailyTotals.map((dailyTotal) => {
@@ -39,8 +41,7 @@ function DailyTotalsTable() {
 				_id: dailyTotal._id,
 				date: localDate,
 				key: `${teamMember._id}-${dailyTotal._id}`,
-				teamMemberFirstName: teamMember.teamMemberFirstName,
-				teamMemberLastName: teamMember.teamMemberLastName,
+				teamMemberName: `${teamMember.teamMemberFirstName} ${teamMember.teamMemberLastName}`,
 				teamMemberPosition: teamMember.position,
 				...dailyTotal,
 			};
@@ -48,8 +49,7 @@ function DailyTotalsTable() {
 	);
 
 	const columns = [
-		{ field: 'teamMemberFirstName', headerName: 'First Name', pinned: 'left' },
-		{ field: 'teamMemberLastName', headerName: 'Last Name' },
+		{ field: 'teamMemberName', headerName: 'Name', pinned: 'left' },
 		{ field: 'teamMemberPosition', headerName: 'Position', width: 120 },
 		...Object.entries(columnNames).map(([key, name]) => ({
 			field: key,
@@ -74,7 +74,6 @@ function DailyTotalsTable() {
 				return {
 					deleteDailyTotal: deleteDailyTotal,
 					params: params,
-					refreshData: fetchAllDailyTotals,
 				};
 			},
 		},

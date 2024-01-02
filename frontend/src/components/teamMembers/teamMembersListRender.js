@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React, { useState, useContext } from 'react';
+import { TeamContext } from '../../contexts/TeamContext';
 import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModules } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -6,9 +7,10 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridSearch, AgGridExport, DeleteTMButtonRender } from '../customAgGridHeader';
 const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
-function TeamMembersListRender({ teamByPosition, deleteTeamMember }) {
+function TeamMembersListRender({ teamMemberByPosition, deleteTeamMember }) {
 	// eslint-disable-next-line
-	const [gridApi, setGridApi] = React.useState(null);
+	const [gridApi, setGridApi] = useState(null);
+	const { getTeamNameFromId } = useContext(TeamContext);
 
 	const onGridReady = (params) => {
 		setGridApi(params.api);
@@ -16,21 +18,21 @@ function TeamMembersListRender({ teamByPosition, deleteTeamMember }) {
 
 	const columns = [
 		{
-			field: 'team',
+			field: 'teamName',
 			headerName: 'Team',
 			width: 130,
 			filter: 'agTextColumnFilter',
 			checkboxSelection: true,
 		},
 		{
-			field: 'teamMemberLastName',
-			headerName: 'Last Name',
+			field: 'teamMemberFirstName',
+			headerName: 'First Name',
 			width: 130,
 			filter: 'agTextColumnFilter',
 		},
 		{
-			field: 'teamMemberFirstName',
-			headerName: 'First Name',
+			field: 'teamMemberLastName',
+			headerName: 'Last Name',
 			width: 130,
 			filter: 'agTextColumnFilter',
 		},
@@ -50,11 +52,12 @@ function TeamMembersListRender({ teamByPosition, deleteTeamMember }) {
 		},
 	];
 
-	const rows = Object.values(teamByPosition)
+	const rows = Object.values(teamMemberByPosition)
     .flat()
     .map((member) => ({
         ...member,
         id: member._id,
+		teamName: getTeamNameFromId(member.teams[0]),
         teamMemberFirstName: member.teamMemberFirstName ? capitalizeFirstLetter(member.teamMemberFirstName) : 'Unknown',
         teamMemberLastName: member.teamMemberLastName ? capitalizeFirstLetter(member.teamMemberLastName) : 'Unknown',
     }));

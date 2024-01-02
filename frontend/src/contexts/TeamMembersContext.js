@@ -1,31 +1,32 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { getTeamMembers, getTeamMember } from '../api/teamMembers';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
+import { getAllTeamMembers, getTeamMember } from '../api/teamMembers';
 
 export const TeamMembersContext = createContext();
 
 export const TeamMembersProvider = ({ children }) => {
 	const [teamMembers, setTeamMembers] = useState([]);
 
-	useEffect(() => {
-		const fetchTeamMembers = async () => {
-			try {
-				const allTeamMembers = await getTeamMembers();
-				setTeamMembers(allTeamMembers);
-			} catch (error) {
-				console.log('Error fetching team members', error);
-				alert('Error fetching team members');
-			}
-		};
-
-		fetchTeamMembers();
+	const fetchTeamMembers = useCallback(async () => {
+		try {
+			const allTeamMembers = await getAllTeamMembers();
+			setTeamMembers(allTeamMembers);
+		} catch (error) {
+			console.log('Error fetching team members', error);
+			alert('Error fetching team members');
+		}
 	}, []);
+
+	useEffect(() => {
+		fetchTeamMembers();
+	}, [fetchTeamMembers]);
 
 	return (
 		<TeamMembersContext.Provider
 			value={{
 				teamMembers,
-                setTeamMembers,
+				setTeamMembers,
 				getTeamMember,
+				fetchTeamMembers,
 			}}
 		>
 			{children}

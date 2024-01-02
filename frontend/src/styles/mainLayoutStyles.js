@@ -55,6 +55,7 @@ export const StyledListSubheader = styled(ListSubheader)({
 export const StyledListItemIcon = styled(ListItemIcon)({
 	minWidth: 0,
 	marginRight: '1.5rem',
+	fontSize: '1.5rem',
 });
 
 //* General Styles

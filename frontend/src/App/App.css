@@ -62,3 +62,7 @@
 .team-card.focused {
   filter: blur(0);
 }
+
+.ag-row-even {
+  background-color: #0e303f; /* Replace with your preferred color */
+}

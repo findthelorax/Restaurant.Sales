@@ -192,6 +192,48 @@ exports.getDailyTotal = async (req, res) => {
 	}
 };
 
+//* Using schema
+
+// Remove a daily total
+exports.removeDailyTotal = async (req, res) => {
+	try {
+		const { teamMemberId, dailyTotalId } = req.params;
+
+		const teamMember = await TeamMember.findById(teamMemberId);
+		if (!teamMember) {
+			return res.status(404).send({ message: 'Team member not found' });
+		}
+
+		try {
+			teamMember.removeDailyTotal(dailyTotalId);
+			teamMember.markModified('dailyTotals');
+			await teamMember.save();
+			res.send({ message: 'Daily total deleted successfully' });
+		} catch (err) {
+			console.error('Error deleting daily total:', err);
+			next(err);
+		}
+	} catch (error) {
+		console.error('Error deleting daily total:', error);
+		res.status(500).json({ message: 'Internal Server Error' });
+	}
+};
+
+// Get weekly totals
+exports.getWeeklyTotals = async (req, res) => {
+	try {
+		const teamMember = await TeamMember.findById(req.params.id);
+		if (!teamMember) {
+			return res.status(404).send();
+		}
+
+		const weeklyTotal = teamMember.getWeeklyTotals(req.query.weekStart);
+		res.send(weeklyTotal);
+	} catch (error) {
+		res.status(500).send(error);
+	}
+};
+
 // Create daily totals for a specific team member
 exports.createDailyTotal = async (req, res) => {
 	try {
@@ -224,7 +266,7 @@ exports.createDailyTotal = async (req, res) => {
 
 		// Update the team member's daily totals
 		teamMember.addDailyTotal(dailyTotal);
-		teamMember.updateWeeklyTotals();
+		// teamMember.updateWeeklyTotals();
 
 		// Mark the dailyTotals field as modified
 		teamMember.markModified('dailyTotals');
@@ -262,16 +304,19 @@ exports.deleteDailyTotal = async (req, res) => {
 			return res.status(404).send({ message: 'Daily total not found' });
 		}
 
+		// Save the date of the daily total before removing it
+		const dailyTotalDate = teamMember.dailyTotals[dailyTotalIndex].date;
+
 		teamMember.dailyTotals.splice(dailyTotalIndex, 1);
-		teamMember.updateWeeklyTotals();
+		teamMember.updateWeeklyTotals(dailyTotalDate);
 		teamMember.markModified('dailyTotals');
 
 		try {
 			await teamMember.save();
 			res.send({ message: 'Daily total deleted successfully' });
 		} catch (err) {
-			console.error('Error deleting daily total:', error);
-			next(error);
+			console.error('Error deleting daily total:', err);
+			next(err);
 		}
 	} catch (error) {
 		console.error('Error deleting daily total:', error);
@@ -418,12 +463,7 @@ exports.updateWeeklyTotalsPut = async (req, res) => {
 
 		// Create a new date using moment and set it to the start of the week
 		const weekStartLocal = moment().local().startOf('week').toDate();
-		console.log(
-			'🚀 ~ file: TeamMembersController.js:375 ~ exports.updateWeeklyTotalsPut= ~ weekStartLocal:',
-			weekStartLocal
-		);
 		const weekStart = moment().startOf('week').toDate();
-		console.log('🚀 ~ file: TeamMembersController.js:377 ~ exports.updateWeeklyTotalsPut= ~ weekStart:', weekStart);
 
 		const existingWeeklyTotal = teamMember.weeklyTotals.find((total) =>
 			moment(total.week).local().startOf('week').isSame(weekStart, 'week')
@@ -446,15 +486,7 @@ exports.updateWeeklyTotalsPatch = async (req, res) => {
 	try {
 		// Parse the date string from the client using moment
 		const weekStartLocal = moment(req.params.week).local().startOf('day').toDate();
-		console.log(
-			'🚀 ~ file: TeamMembersController.js:400 ~ exports.updateWeeklyTotalsPatch= ~ weekStartLocal:',
-			weekStartLocal
-		);
 		const weekStart = moment(req.params.week).startOf('week').toDate();
-		console.log(
-			'🚀 ~ file: TeamMembersController.js:402 ~ exports.updateWeeklyTotalsPatch= ~ weekStart:',
-			weekStart
-		);
 
 		// Check for existing weekly total for the same week
 		const existingWeeklyTotal = await TeamMember.findOne({
@@ -493,5 +525,54 @@ exports.updateWeeklyTotalsPatch = async (req, res) => {
 		res.status(200).json({ message: 'Weekly total updated' });
 	} catch (error) {
 		res.status(500).json({ message: error.message });
+	}
+};
+
+//* Work Schedule
+exports.createWorkSchedule = async (req, res) => {
+	try {
+		const updatedTeamMember = await TeamMember.findByIdAndUpdate(
+			req.params.teamMemberId,
+			{ workSchedule: req.body.workSchedule },
+			{ new: true }
+		);
+		res.json(updatedTeamMember);
+	} catch (err) {
+		res.json({ message: err });
+	}
+};
+
+exports.getWorkSchedule = async (req, res) => {
+	try {
+		const teamMember = await TeamMember.findById(req.params.teamMemberId);
+		res.json(teamMember.workSchedule);
+	} catch (err) {
+		res.json({ message: err });
+	}
+};
+
+exports.addWorkDate = async (req, res) => {
+	try {
+		const updatedTeamMember = await TeamMember.findByIdAndUpdate(
+			req.params.teamMemberId,
+			{ $push: { workSchedule: req.body.workDate } },
+			{ new: true }
+		);
+		res.json(updatedTeamMember);
+	} catch (err) {
+		res.json({ message: err });
+	}
+};
+
+exports.removeWorkDate = async (req, res) => {
+	try {
+		const updatedTeamMember = await TeamMember.findByIdAndUpdate(
+			req.params.teamMemberId,
+			{ $pull: { workSchedule: req.body.workDate } },
+			{ new: true }
+		);
+		res.json(updatedTeamMember);
+	} catch (err) {
+		res.json({ message: err });
 	}
 };
