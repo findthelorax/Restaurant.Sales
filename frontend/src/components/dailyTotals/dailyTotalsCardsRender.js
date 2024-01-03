@@ -40,20 +40,20 @@ export function DailyFoodSalesCardRender({
 						<Typography variant="h5">{formattedTotalFoodSales}</Typography>
 					</Stack>
 					<StyledSalesAvatar>
-						<SvgIcon fontSize="medium">
-							<GiHamburger />
-						</SvgIcon>
+						<GiHamburger fontSize="medium" />
 					</StyledSalesAvatar>
 				</Stack>
 				{formattedDifference && (
 					<Stack alignItems="center" direction="row" spacing={2} sx={{ mt: 2 }}>
 						<Stack alignItems="center" direction="row" spacing={0.5}>
-							<SvgIcon
-								color={difference === 0 ? 'disabled' : positive ? success : error}
-								fontSize="small"
-							>
-								{difference === 0 ? <FaUtensils /> : positive ? <FaArrowUp /> : <FaArrowDown />}
-							</SvgIcon>
+							{difference === 0 ? (
+								<FaUtensils fontSize="small" />
+							) : positive ? (
+								<FaArrowUp fontSize="small" />
+							) : (
+								<FaArrowDown fontSize="small" />
+							)}
+
 							<Typography color={positive ? success.main : error.main} variant="body2">
 								{formattedDifference}%
 							</Typography>
@@ -109,20 +109,19 @@ export function DailyBarSalesCardRender({
 						<Typography variant="h5">{formattedTotalBarSales}</Typography>
 					</Stack>
 					<StyledSalesAvatar>
-						<SvgIcon fontSize="medium">
-							<CiBeerMugFull />
-						</SvgIcon>
+						<CiBeerMugFull fontSize="medium" />
 					</StyledSalesAvatar>
 				</Stack>
 				{formattedDifference && (
 					<Stack alignItems="center" direction="row" spacing={2} sx={{ mt: 2 }}>
 						<Stack alignItems="center" direction="row" spacing={0.5}>
-							<SvgIcon
-								color={difference === 0 ? 'disabled' : positive ? 'success' : 'error'}
-								fontSize="small"
-							>
-								{difference === 0 ? <FaWhiskeyGlass /> : positive ? <FaArrowUp /> : <FaArrowDown />}
-							</SvgIcon>
+							{difference === 0 ? (
+								<FaWhiskeyGlass fontSize="small" />
+							) : positive ? (
+								<FaArrowUp fontSize="small" />
+							) : (
+								<FaArrowDown fontSize="small" />
+							)}
 							<Typography color={positive ? success.main : error.main} variant="body2">
 								{formattedDifference}%
 							</Typography>

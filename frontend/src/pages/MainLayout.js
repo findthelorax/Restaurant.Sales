@@ -13,16 +13,14 @@ import SchedulePage from './schedule/schedulePage';
 
 function MainLayout() {
 	// const { currentUser } = useAuth();
-
 	const [isDrawerOpen, setIsDrawerOpen] = useState(true);
 	const handleDrawerToggle = () => {
 		setIsDrawerOpen(!isDrawerOpen);
 	};
 
 	const [selectedMenu, setSelectedMenu] = useState('Dashboard');
-
 	const [selectedDate, setSelectedDate] = useState(moment());
-
+	
 	const handleDateChange = (date) => {
 		setSelectedDate(moment(date));
 		// Here you can dispatch an action or call a function to update the infographics in the dashboard

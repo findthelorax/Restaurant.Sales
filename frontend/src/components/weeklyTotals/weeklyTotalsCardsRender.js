@@ -9,15 +9,15 @@ import { success, error } from '../../theme/colors';
 import { CardContent, Stack, SvgIcon, Typography, CircularProgress } from '@mui/material';
 import { StyledSalesAvatar, StyledSalesCard } from '../../styles/mainLayoutStyles';
 
-function WeeklyFoodSalesCardRender({ selectedDate, salesDifferences, sx, totalWeeklyFoodSales }) {
-	console.log('🚀 ~ file: weeklyTotalsCardsRender.js:92 ~ salesDifferences:', salesDifferences);
+function WeeklyFoodSalesCardRender({ selectedDate, salesDifferences, sx, selectedWeeklyFoodSales }) {
 	const { teamMembers } = useContext(TeamMembersContext);
 	if (!teamMembers) {
 		return <CircularProgress />;
 	}
-	const formattedTotalWeeklyFoodSales = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-		totalWeeklyFoodSales
-	);
+	const formattedSelectedWeeklyFoodSales = new Intl.NumberFormat('en-US', {
+		style: 'currency',
+		currency: 'USD',
+	}).format(selectedWeeklyFoodSales);
 
 	const difference = salesDifferences.foodSales?.difference || 0;
 	const positive = salesDifferences.foodSales?.positive || 0;
@@ -37,24 +37,24 @@ function WeeklyFoodSalesCardRender({ selectedDate, salesDifferences, sx, totalWe
 							Food Sales {startDate}&nbsp;-&nbsp;{endDate}
 						</Typography>
 						<Typography variant="h5" sx={{ overflowWrap: 'break-word' }}>
-							{formattedTotalWeeklyFoodSales}
+							{formattedSelectedWeeklyFoodSales}
 						</Typography>
 					</Stack>
 					<StyledSalesAvatar>
-						<SvgIcon fontSize="medium">
-							<GiHamburger />
-						</SvgIcon>
+						<GiHamburger fontSize="large" />
 					</StyledSalesAvatar>
 				</Stack>
 				{formattedDifference && (
 					<Stack alignItems="center" direction="row" spacing={2} sx={{ mt: 2 }}>
 						<Stack alignItems="center" direction="row" spacing={0.5}>
-							<SvgIcon
-								color={difference === 0 ? 'disabled' : positive ? success : error}
-								fontSize="small"
-							>
-								{difference === 0 ? <FaUtensils /> : positive ? <FaArrowUp /> : <FaArrowDown />}
-							</SvgIcon>
+							{difference === 0 ? (
+								<FaUtensils fontSize="small" />
+							) : positive ? (
+								<FaArrowUp fontSize="small" />
+							) : (
+								<FaArrowDown fontSize="small" />
+							)}
+
 							<Typography color={positive ? success.main : error.main} variant="body2">
 								{formattedDifference}%
 							</Typography>
@@ -75,20 +75,23 @@ WeeklyFoodSalesCardRender.propTypes = {
 	salesDifferences: PropTypes.shape({
 		foodSales: PropTypes.object,
 	}),
+	selectedWeeklyFoodSales: PropTypes.number.isRequired,
 };
+
 function WeeklyBarSalesCardRender({
 	selectedDate,
 	salesDifferences = { barSales: { difference: 0, positive: 0 } },
 	sx,
-	totalWeeklyBarSales,
+	selectedWeeklyBarSales,
 }) {
 	const { teamMembers } = useContext(TeamMembersContext);
 	if (!teamMembers) {
 		return <CircularProgress />;
 	}
-	const formattedTotalWeeklyBarSales = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-		totalWeeklyBarSales
-	);
+	const formattedSelectedWeeklyBarSales = new Intl.NumberFormat('en-US', {
+		style: 'currency',
+		currency: 'USD',
+	}).format(selectedWeeklyBarSales);
 
 	const startDate = moment(selectedDate).startOf('week').format('MM/DD');
 	const endDate = moment(selectedDate).endOf('week').format('MM/DD');
@@ -107,9 +110,7 @@ function WeeklyBarSalesCardRender({
 						<Typography color="text.secondary" variant="overline">
 							Bar Sales {startDate}&nbsp;-&nbsp;{endDate}
 						</Typography>
-						<Typography variant="h5">
-							{formattedTotalWeeklyBarSales}
-						</Typography>
+						<Typography variant="h5">{formattedSelectedWeeklyBarSales}</Typography>
 					</Stack>
 					<StyledSalesAvatar>
 						<SvgIcon fontSize="medium">
@@ -120,12 +121,13 @@ function WeeklyBarSalesCardRender({
 				{formattedDifference && (
 					<Stack alignItems="center" direction="row" spacing={2} sx={{ mt: 2 }}>
 						<Stack alignItems="center" direction="row" spacing={0.5}>
-							<SvgIcon
-								color={difference === 0 ? 'disabled' : 'positive' ? 'success' : 'error'}
-								fontSize="small"
-							>
-								{difference === 0 ? <FaWhiskeyGlass /> : positive ? <FaArrowUp /> : <FaArrowDown />}
-							</SvgIcon>
+							{difference === 0 ? (
+								<FaWhiskeyGlass fontSize="small" />
+							) : positive ? (
+								<FaArrowUp fontSize="small" />
+							) : (
+								<FaArrowDown fontSize="small" />
+							)}
 							<Typography color={positive ? success.main : error.main} variant="body2">
 								{formattedDifference}%
 							</Typography>
@@ -146,6 +148,7 @@ WeeklyBarSalesCardRender.propTypes = {
 	salesDifferences: PropTypes.shape({
 		barSales: PropTypes.object,
 	}),
+	selectedWeeklyBarSales: PropTypes.number.isRequired,
 };
 
 export { WeeklyBarSalesCardRender, WeeklyFoodSalesCardRender };

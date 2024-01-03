@@ -99,49 +99,28 @@ const distributeTipOuts = (teamMembers, date, bartenderTipOut, runnerTipOut, hos
 	}
 };
 
-export const handleDailyTotalDeletion = (deletedTotal, teamMembers) => {
-	// Find the server's daily total for the deleted day
-	const server = teamMembers.find(
-		(member) =>
-			member.position === 'Server' &&
-			member.dailyTotals.some((total) => moment(total.date).isSame(moment(deletedTotal.date), 'day'))
-	);
+export const handleDailyTotalDeletion = (deletedMember, teamMembers) => {
+    // Find the servers who worked on the same day as the deleted member
+    const servers = teamMembers.filter(
+        (member) =>
+            member.position === 'Server' &&
+            member.dailyTotals.some((total) => moment(total.date).isSame(moment(deletedMember.date), 'day'))
+    );
 
-	let serverTotal;
+    servers.forEach((server) => {
+        // Recalculate the server's tip outs
+        const serverTotal = CalculateTipOuts(server, server.dailyTotals.find((total) =>
+            moment(total.date).isSame(moment(deletedMember.date), 'day')), teamMembers);
 
-	if (server) {
-		const serverTotal = server.dailyTotals.find((total) =>
-			moment(total.date).isSame(moment(deletedTotal.date), 'day')
-		);
+        // Update the server's daily totals
+        const total = server.dailyTotals.find((total) =>
+            moment(total.date).isSame(moment(deletedMember.date), 'day'));
 
-		if (serverTotal) {
-			// Subtract the tip outs for the deleted day from the server's total tip outs
-			serverTotal.totalTipOut -=
-				serverTotal.bartenderTipOuts + serverTotal.runnerTipOuts + serverTotal.hostTipOuts;
-		}
-	}
-
-	// Find the bartenders, runners, and hosts who worked on the deleted day
-	const otherStaff = teamMembers.filter(
-		(member) =>
-			['Bartender', 'Runner', 'Host'].includes(member.position) &&
-			member.dailyTotals.some((total) => moment(total.date).isSame(moment(deletedTotal.date), 'day'))
-	);
-
-	otherStaff.forEach((member) => {
-		const memberTotal = member.dailyTotals.find((total) =>
-			moment(total.date).isSame(moment(deletedTotal.date), 'day')
-		);
-
-		if (memberTotal && serverTotal) {
-			// Subtract the tip outs they received for the deleted day from their total tips received
-			if (member.position === 'Bartender') {
-				memberTotal.tipsReceived -= Number(serverTotal.barSales) * tipOutPercentages.Bartender;
-			} else if (member.position === 'Runner') {
-				memberTotal.tipsReceived -= Number(serverTotal.foodSales) * tipOutPercentages.Runner;
-			} else if (member.position === 'Host') {
-				memberTotal.tipsReceived -= Number(serverTotal.foodSales) * tipOutPercentages.Host;
-			}
-		}
-	});
+        if (total) {
+            total.bartenderTipOuts = serverTotal.Bartender;
+            total.runnerTipOuts = serverTotal.Runner;
+            total.hostTipOuts = serverTotal.Host;
+            total.totalTipOut = serverTotal.Bartender + serverTotal.Runner + serverTotal.Host;
+        }
+    });
 };

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Grid, Snackbar } from '@mui/material';
 import Alert from '@mui/material/Alert';
 import { AddToScheduleForm } from '../../components/teamMembers/workScheduleForm';
+import { ViewSchedule } from '../../components/teamMembers/workScheduleList'; 
 import { getWorkSchedule, createWorkSchedule } from '../../api/teamMembers';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 import moment from 'moment';
@@ -86,6 +87,9 @@ const SchedulePage = () => {
 			<Grid item xs={12} md={6}>
 				<AddToScheduleForm onAddToSchedule={handleAddToSchedule} />
 			</Grid>
+			{/* <Grid item xs={12} md={6}>
+				<ViewSchedule />
+			</Grid> */}
 			<Snackbar open={successOpen} autoHideDuration={6000} onClose={() => setSuccessOpen(false)}>
 				<Alert onClose={() => setSuccessOpen(false)} severity="success" sx={{ width: '100%' }}>
 					{successMessage}

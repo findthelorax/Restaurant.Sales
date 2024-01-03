@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Grid, Typography, Stack, Button } from '@mui/material';
-// import TeamMembersList from '../components/teamMembers/teamMembersList';
 import TeamMemberForm from '../components/teamMembers/teamMemberForm';
 import TeamForm from '../components/team/teamForm';
 import TeamMemberConfirmationPopup from '../components/teamMembers/teamMemberConfirmation';
@@ -22,8 +21,8 @@ function Dashboard({ selectedDate }) {
 	// eslint-disable-next-line
 	const [timePeriod, setTimePeriod] = useState('day');
 	const { open, newTeamMember, handleClose } = useTMConfPopup();
-	const weekStart = selectedDate.startOf('week').format('MM/DD/YY');
-	const weekEnd = selectedDate.endOf('week').format('MM/DD/YY');
+	const weekStart = selectedDate.clone().startOf('week').format('MM/DD/YY');
+	const weekEnd = selectedDate.clone().endOf('week').format('MM/DD/YY');
 
 	const items = [
 		{
@@ -57,17 +56,14 @@ function Dashboard({ selectedDate }) {
 			{/* row 1 */}
 			<StyledGridItem item xs={12} sm={6} md={4} lg={3} xl={2}>
 				<WeeklyFoodSalesCard selectedDate={selectedDate} />
-				{/* <WeeklyFoodSalesCard selectedDate={selectedDate} weeklyDifferences={weeklyDifferences} /> */}
 			</StyledGridItem>
 			<StyledGridItem item xs={12} sm={6} md={4} lg={3} xl={2}>
 				<WeeklyBarSalesCard selectedDate={selectedDate} />
 			</StyledGridItem>
 			<StyledGridItem item xs={12} sm={6} md={4} lg={3} xl={2}>
-				{/* {<DailyFoodSalesCard selectedDate={selectedDate} dailyDifferences={dailyDifferences} />} */}
 				{<DailyFoodSalesCard selectedDate={selectedDate} />}
 			</StyledGridItem>
 			<StyledGridItem item xs={12} sm={6} md={4} lg={3} xl={2}>
-				{/* <DailyBarSalesCard selectedDate={selectedDate} dailyDifferences={dailyDifferences} /> */}
 				<DailyBarSalesCard selectedDate={selectedDate} />
 			</StyledGridItem>
 
