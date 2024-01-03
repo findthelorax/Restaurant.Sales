@@ -5,18 +5,14 @@ import { DailyFoodSalesCardRender, DailyBarSalesCardRender } from '../dailyTotal
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 
 function DailyFoodSalesCard({ selectedDate }) {
-	console.log("🚀 ~ file: dailyTotalsCards.js:8 ~ DailyFoodSalesCard ~ selectedDate:", selectedDate)
 	const { teamMembers } = useContext(TeamMembersContext);
 	const teamMembersWithTotals = useMemo(() => {
 		const selectedDay = moment(selectedDate).format('YYYY-MM-DD');
-		console.log("🚀 ~ file: dailyTotalsCards.js:12 ~ teamMembersWithTotals ~ selectedDay:", selectedDay)
 
 		return teamMembers
 			.map((member) => {
 				const dailyTotals = member.dailyTotals.filter((total) => {
-					const totalDate = moment(total.date).local().format('YYYY-MM-DD');
-					console.log("🚀 ~ file: dailyTotalsCards.js:19 ~ dailyTotals ~ selectedDay:", selectedDay)
-					console.log("🚀 ~ file: dailyTotalsCards.js:19 ~ dailyTotals ~ totalDate:", totalDate)
+					const totalDate = moment.utc(total.date).format('YYYY-MM-DD');
 					return totalDate === selectedDay;
 				});
 				return { ...member, dailyTotals };
@@ -25,9 +21,7 @@ function DailyFoodSalesCard({ selectedDate }) {
 	}, [teamMembers, selectedDate]);
 
 	const allDailyTotals = teamMembersWithTotals.flatMap((member) => member.dailyTotals);
-	console.log("🚀 ~ file: dailyTotalsCards.js:28 ~ DailyFoodSalesCard ~ allDailyTotals:", allDailyTotals)
 	const totalFoodSales = allDailyTotals.reduce((sum, total) => sum + total.foodSales, 0);
-	console.log("🚀 ~ file: dailyTotalsCards.js:30 ~ DailyFoodSalesCard ~ totalFoodSales:", totalFoodSales)
 	const salesDifferences = calculateDailySalesDifferences(allDailyTotals);
 
 	return (
@@ -43,11 +37,11 @@ function DailyFoodSalesCard({ selectedDate }) {
 function DailyBarSalesCard({ selectedDate }) {
 	const { teamMembers } = useContext(TeamMembersContext);
 	const teamMembersWithTotals = useMemo(() => {
-		const selectedDay = moment(selectedDate).format('YYYY-MM-DD');
+		const selectedDay = selectedDate.format('YYYY-MM-DD');
 
 		return teamMembers.map((member) => {
 			const dailyTotals = member.dailyTotals.filter((total) => {
-				const totalDate = moment(total.date).local().format('YYYY-MM-DD');
+				const totalDate = moment.utc(total.date).format('YYYY-MM-DD');
 				return totalDate === selectedDay;
 			});
 			return { ...member, dailyTotals };

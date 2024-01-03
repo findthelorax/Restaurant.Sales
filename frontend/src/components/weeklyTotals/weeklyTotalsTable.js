@@ -7,11 +7,11 @@ import { titleToPropName, titles, formatUSD } from '../../hooks/salesTotalsLogic
 
 function WeeklyTotalsTable({ selectedDate, setSelectedDate }) {
 	const { teamMembers } = useContext(TeamMembersContext);
-	const date = moment(selectedDate);
+	const date = selectedDate;
 
 	const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-	const weeklyTotals = useMemo(() => {
+	const selectedWeeklyTotals = useMemo(() => {
 		const totals = Array(7)
 			.fill(0)
 			.map(() => {
@@ -22,11 +22,11 @@ function WeeklyTotalsTable({ selectedDate, setSelectedDate }) {
 				return dayTotal;
 			});
 
-			teamMembers.forEach((member) => {
+		teamMembers.forEach((member) => {
 			member.dailyTotals.forEach((total) => {
-				const totalDate = moment(total.date);
-				const selectedWeekStart = moment(selectedDate).startOf('week');
-				const selectedWeekEnd = moment(selectedWeekStart).endOf('week');
+				const totalDate = moment.utc(total.date);
+				const selectedWeekStart = moment.utc(selectedDate).startOf('week');
+				const selectedWeekEnd = moment.utc(selectedWeekStart).endOf('week');
 
 				if (totalDate.isSameOrAfter(selectedWeekStart) && totalDate.isSameOrBefore(selectedWeekEnd)) {
 					const dayOfWeek = totalDate.day();
@@ -55,10 +55,10 @@ function WeeklyTotalsTable({ selectedDate, setSelectedDate }) {
 
 	const rows = titles.map((title, i) => {
 		const row = { id: i, salesTips: title };
-		weeklyTotals.forEach((total, index) => {
+		selectedWeeklyTotals.forEach((total, index) => {
 			row[daysOfWeek[index]] = formatUSD(total[titleToPropName[title]]);
 		});
-		row.total = formatUSD(weeklyTotals.reduce((sum, total) => sum + total[titleToPropName[title]], 0));
+		row.total = formatUSD(selectedWeeklyTotals.reduce((sum, total) => sum + total[titleToPropName[title]], 0));
 		return row;
 	});
 

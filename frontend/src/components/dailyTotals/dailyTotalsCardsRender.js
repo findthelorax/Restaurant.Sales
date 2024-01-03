@@ -27,7 +27,7 @@ export function DailyFoodSalesCardRender({
 		difference
 	);
 
-	const formattedDate = moment(selectedDate).format('MM/DD');
+	const formattedDate = selectedDate.format('MM/DD');
 
 	return (
 		<StyledSalesCard>
@@ -96,7 +96,7 @@ export function DailyBarSalesCardRender({
 		difference
 	);
 
-	const formattedDate = moment(selectedDate).format('MM/DD');
+	const formattedDate = selectedDate.format('MM/DD');
 
 	return (
 		<StyledSalesCard>

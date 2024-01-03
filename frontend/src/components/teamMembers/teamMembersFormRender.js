@@ -8,7 +8,7 @@ import {
 	StyledFormControl,
 	PinkStyledButton,
 } from '../../styles/mainLayoutStyles';
-import { TeamContext } from '../../contexts/TeamContext'; // Update the import path as needed
+import { TeamContext } from '../../contexts/TeamContext';
 
 function TeamMemberForm({
 	teamMemberFirstName,
@@ -26,6 +26,11 @@ function TeamMemberForm({
 	// eslint-disable-next-line
 	const { teams, setTeams } = useContext(TeamContext);
 	const [submitStatus, setSubmitStatus] = useState(null);
+	const [successMessage, setSuccessMessage] = useState('');
+
+	const capitalizeFirstLetter = (string) => {
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	};
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -41,6 +46,11 @@ function TeamMemberForm({
 		try {
 			// Call addTeamMember with the new team member object
 			await addTeamMember(newTeamMember);
+			setSuccessMessage(
+				`${capitalizeFirstLetter(teamMemberFirstName)} ${capitalizeFirstLetter(
+					teamMemberLastName
+				)} - ${position} added to ${teams.find((team) => team._id === teamId)?.teamName}!`
+			);
 			setSubmitStatus('success');
 		} catch (error) {
 			setSubmitStatus('error');
@@ -120,7 +130,7 @@ function TeamMemberForm({
 						severity={submitStatus || 'info'}
 						sx={{ width: '100%' }}
 					>
-						{submitStatus === 'success' ? 'Team Member Added!' : 'Failed!'}
+						{submitStatus === 'success' ? successMessage : 'Failed!'}
 					</Alert>
 				</Snackbar>
 			</StyledBox>

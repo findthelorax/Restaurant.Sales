@@ -11,9 +11,7 @@ export const TeamContextProvider = props => {
     }, []);
 
     const getTeamNameFromId = (teamId) => {
-        console.log("🚀 ~ file: TeamContext.js:14 ~ getTeamNameFromId ~ teamId:", teamId)
         const team = teams.find(team => {
-            console.log("🚀 ~ file: TeamContext.js:16 ~ getTeamNameFromId ~ team:", team)
             return team._id === teamId
         })
         return team ? team.teamName : 'Unknown';

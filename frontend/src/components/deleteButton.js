@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import moment from 'moment';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { TeamMembersContext } from '../contexts/TeamMembersContext';
 import { deleteDailyTotalFromServer } from './../api/salesTotals';
@@ -51,7 +52,8 @@ export function DeleteDailyTotalsButton({ params }) {
 			<Dialog open={show} onClose={handleClose}>
 				<DialogTitle>Confirm Delete</DialogTitle>
 				<DialogContent>
-					Are you sure you want to delete the daily total for {params.data.teamMemberName} - {params.data.teamMemberPosition} on {params.data.date}?
+					Are you sure you want to delete the daily total for {params.data.teamMemberName} -
+					{params.data.teamMemberPosition} on {moment(params.data.date).format('DD MMMM YYYY')}?
 				</DialogContent>
 				<DialogActions>
 					<Button variant="secondary" onClick={handleClose}>
