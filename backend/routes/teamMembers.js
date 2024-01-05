@@ -7,13 +7,14 @@ router.get('/allWeeklyTotals', TeamMembersController.getAllWeeklyTotals);
 
 router.get('/:teamMemberId', TeamMembersController.getTeamMember);
 router.post("/", TeamMembersController.createTeamMember);
-router.put('/:teamMemberId', TeamMembersController.updateTeamMember);
+router.patch('/:teamMemberId', TeamMembersController.updateTeamMember);
 router.delete('/:teamMemberId', TeamMembersController.deleteTeamMember);
 
 router.get('/', TeamMembersController.getTeamMembers);
 
 router.get('/:teamMemberId/dailyTotals', TeamMembersController.getDailyTotals);
 router.get('/:teamMemberId/dailyTotals/:dailyTotalId', TeamMembersController.getDailyTotal);
+router.patch('/:teamMemberId/dailyTotals/:dailyTotalId', TeamMembersController.updateDailyTotal);
 router.post('/:teamMemberId/dailyTotals', TeamMembersController.createDailyTotal);
 router.delete('/:teamMemberId/dailyTotals/:dailyTotalId', TeamMembersController.removeDailyTotal);
 

@@ -26,6 +26,7 @@ export const deleteTeamMember = async (id) => {
 };
 
 export const updateTeamMember = async (id, updates) => {
+	console.log("🚀 ~ file: teamMembers.js:30 ~ updateTeamMember ~ updates:", updates)
 	try {
 		const response = await axios.patch(`${process.env.REACT_APP_SERVER_URL}/teamMembers/${id}`, updates);
 		return response.data;

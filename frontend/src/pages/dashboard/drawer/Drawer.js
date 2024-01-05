@@ -3,8 +3,9 @@ import { MainListItems, SecondaryListItems, SettingsListItems } from './NavItems
 import { Box, ListItem } from '@mui/material';
 import restaurantPNG from '../../../assets/restaurant.png';
 import { StyledDrawer, drawerWidth, StyledDrawerAvatar } from '../../../styles/mainLayoutStyles';
+import { Link } from 'react-router-dom';
 
-export function PermanentDrawerLeft({ setSelectedMenu }) {
+export function PermanentDrawerLeft() {
     return (
         <Box sx={{ display: 'flex' }}>
             <StyledDrawer
@@ -23,13 +24,13 @@ export function PermanentDrawerLeft({ setSelectedMenu }) {
                     />
                 </ListItem>
                 <Box>
-                    <MainListItems setSelectedMenu={setSelectedMenu}/>
+                    <MainListItems component={Link} />
                 </Box>
                 <Box>
-                    <SecondaryListItems setSelectedMenu={setSelectedMenu}/>
+                    <SecondaryListItems component={Link} />
                 </Box>
                 <Box>
-                    <SettingsListItems setSelectedMenu={setSelectedMenu}/>
+                    <SettingsListItems component={Link} />
                 </Box>
             </StyledDrawer>
         </Box>

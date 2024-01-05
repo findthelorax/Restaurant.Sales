@@ -3,8 +3,6 @@ import { AgGridReact } from 'ag-grid-react';
 import { AllCommunityModules } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { DeleteDTButton } from '../../components/deleteButton';
-import { DeleteDailyTotalsButton } from '../deleteButton';
 
 function DailyTotalsTableRender({ rows, columns, frameworkComponents }) {
 	const [gridApi, setGridApi] = React.useState(null);

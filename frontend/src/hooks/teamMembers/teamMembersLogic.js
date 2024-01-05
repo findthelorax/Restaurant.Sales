@@ -1,4 +1,5 @@
 import { addTeamMember, deleteTeamMember } from '../../api/teamMembers';
+import { prepareDailyTotals } from '../dailyTotals/prepareDailyTotals';
 
 export const addTeamMemberToTeam = (teamMemberName, position, setTeam, clearInputs) => {
 	return async () => {
@@ -30,7 +31,19 @@ export const deleteTeamMemberFromTeam = (setTeam) => {
 
 		try {
 			await deleteTeamMember(id);
-			setTeam((prevTeam) => prevTeam.filter((member) => member._id !== id));
+			setTeam((prevTeam) => {
+				const updatedTeam = prevTeam.filter((member) => member._id !== id);
+				// Get the team of the deleted member
+				const teamOfDeletedMember = prevTeam.find((member) => member._id === id).team;
+				// Filter the updated team to only include members of the same team
+				const sameTeamMembers = updatedTeam.filter((member) => member.team === teamOfDeletedMember);
+				// Recalculate daily totals for each remaining team member in the same team
+				sameTeamMembers.forEach(member => {
+					const updatedDailyTotals = prepareDailyTotals(member, member.dailyTotals, sameTeamMembers, 'delete');
+					member.dailyTotals = updatedDailyTotals;
+				});
+				return updatedTeam;
+			});
 		} catch (error) {
 			console.error('Error deleting team member:', error);
 			alert('Failed to delete team member');

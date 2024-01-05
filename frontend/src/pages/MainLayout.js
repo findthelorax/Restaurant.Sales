@@ -8,61 +8,46 @@ import SettingsPage from './Settings';
 import DatabasePage from '../pages/database/databasePage';
 import TeamMembersPage from '../pages/teamMembers/teamMembersPage';
 import SchedulePage from './schedule/schedulePage';
-// import { Outlet } from 'react-router-dom';
-// import { useAuth } from '../../contexts/AuthContext';
+import { Routes, Route } from 'react-router-dom';
 
 function MainLayout() {
-	// const { currentUser } = useAuth();
 	const [isDrawerOpen, setIsDrawerOpen] = useState(true);
 	const handleDrawerToggle = () => {
 		setIsDrawerOpen(!isDrawerOpen);
 	};
 
-	const [selectedMenu, setSelectedMenu] = useState('Dashboard');
 	const [selectedDate, setSelectedDate] = useState(moment());
 	
 	const handleDateChange = (date) => {
 		setSelectedDate(moment(date));
-		// Here you can dispatch an action or call a function to update the infographics in the dashboard
-	};
-
-	const renderSelectedComponent = () => {
-		switch (selectedMenu) {
-			case 'Dashboard':
-				return <Dashboard selectedDate={selectedDate} handleDateChange={handleDateChange}/>;
-			case 'Team Members':
-				return <TeamMembersPage />;
-			case 'Database':
-				return <DatabasePage />;
-			case 'Settings':
-				return <SettingsPage />;
-			case 'Schedule':
-				return <SchedulePage />;
-			default:
-				return null;
-		}
 	};
 
 	const drawerWidth = 240;
 
 	return (
-		<Box sx={{ display: 'flex', width: '100%' }}>
-			<PermanentDrawerLeft open={isDrawerOpen} handleDrawerClose={handleDrawerToggle} setSelectedMenu={setSelectedMenu} />
-			<Box
-				sx={{
-					display: 'flex',
-					flexDirection: 'column',
-					width: `calc(100% - ${isDrawerOpen ? drawerWidth : 0}px)`,
-					flexGrow: 1,
-				}}
-			>
-				<SearchAppBar open={isDrawerOpen} handleDrawerToggle={handleDrawerToggle} selectedDate={selectedDate} handleDateChange={handleDateChange} />
-				<Box component="main" sx={{ p: { xs: 2, sm: 3 } }}>
-					{/* <Toolbar /> */}
-					{renderSelectedComponent()}
+			<Box sx={{ display: 'flex', width: '100%' }}>
+				<PermanentDrawerLeft open={isDrawerOpen} handleDrawerClose={handleDrawerToggle} />
+				<Box
+					sx={{
+						display: 'flex',
+						flexDirection: 'column',
+						width: `calc(100% - ${isDrawerOpen ? drawerWidth : 0}px)`,
+						flexGrow: 1,
+					}}
+				>
+					<SearchAppBar open={isDrawerOpen} handleDrawerToggle={handleDrawerToggle} selectedDate={selectedDate} handleDateChange={handleDateChange} />
+					<Box component="main" sx={{ p: { xs: 2, sm: 3 } }}>
+						<Routes>
+							<Route path="/dashboard" element={<Dashboard selectedDate={selectedDate} handleDateChange={handleDateChange}/>} />
+							<Route path="/team-members" element={<TeamMembersPage />} />
+							<Route path="/database" element={<DatabasePage />} />
+							<Route path="/settings" element={<SettingsPage />} />
+							<Route path="/schedule" element={<SchedulePage />} />
+							<Route path="*" element={<Dashboard selectedDate={selectedDate} handleDateChange={handleDateChange}/>} />
+						</Routes>
+					</Box>
 				</Box>
 			</Box>
-		</Box>
 	);
 }
 

@@ -2,8 +2,6 @@ import { useContext } from 'react';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext';
 import { prepareDailyTotals } from '../dailyTotals/prepareDailyTotals';
 import { submitDailyTotalToServer } from '../../api/salesTotals';
-// import { useUpdateTeamMemberTipOuts } from '../updateTeamMemberTipOuts';
-// import { tipOuts } from '../tipOuts';
 
 export const useSubmitDailyTotals = () => {
 	const { teamMembers, setTeamMembers } = useContext(TeamMembersContext);
@@ -17,7 +15,10 @@ export const useSubmitDailyTotals = () => {
 			return;
 		}
 
-		const newDailyTotals = prepareDailyTotals(selectedTeamMember, dailyTotal, teamMembers);
+		// Filter the teamMembers to only include members of the same team
+		const sameTeamMembers = teamMembers.filter((member) => member.team === selectedTeamMember.team);
+
+		const newDailyTotals = prepareDailyTotals(selectedTeamMember, dailyTotal, sameTeamMembers, 'submit');
 
 		try {
 			await submitDailyTotalToServer(selectedTeamMember._id, newDailyTotals);

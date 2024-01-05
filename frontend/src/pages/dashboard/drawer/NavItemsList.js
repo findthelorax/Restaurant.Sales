@@ -10,29 +10,30 @@ import { TbDatabaseCog } from 'react-icons/tb';
 import { FiSettings } from 'react-icons/fi';
 import { BsCalendar2Date } from "react-icons/bs";
 import { StyledListSubheader, StyledListItemIcon } from '../../../styles/mainLayoutStyles';
+import { Link } from 'react-router-dom';
 
-export const MainListItems = ({ setSelectedMenu }) => (
+export const MainListItems = () => (
 	<React.Fragment>
 		<StyledListSubheader component="div">Dashboard</StyledListSubheader>
-		<ListItemButton onClick={() => setSelectedMenu('Dashboard')}>
+		<ListItemButton component={Link} to="/dashboard">
 			<StyledListItemIcon>
 				<AiOutlineDashboard />
 			</StyledListItemIcon>
 			<ListItemText primary="Dashboard" />
 		</ListItemButton>
-		<ListItemButton onClick={() => setSelectedMenu('Team Members')}>
+		<ListItemButton component={Link} to="/team-members">
 			<StyledListItemIcon>
 				<RiTeamLine />
 			</StyledListItemIcon>
 			<ListItemText primary="Team Members" />
 		</ListItemButton>
-		<ListItemButton onClick={() => setSelectedMenu('Schedule')}>
+		<ListItemButton component={Link} to="/schedule">
 			<StyledListItemIcon>
 				<BsCalendar2Date />
 			</StyledListItemIcon>
 			<ListItemText primary="Schedule" />
 		</ListItemButton>
-		<ListItemButton onClick={() => setSelectedMenu('Totals')}>
+		<ListItemButton component={Link} to="/totals">
 			<StyledListItemIcon>
 				<GiMoneyStack />
 			</StyledListItemIcon>
@@ -41,16 +42,16 @@ export const MainListItems = ({ setSelectedMenu }) => (
 	</React.Fragment>
 );
 
-export const SecondaryListItems = ({ setSelectedMenu }) => (
+export const SecondaryListItems = () => (
 	<React.Fragment>
 		<StyledListSubheader component="div">Reports</StyledListSubheader>
-		<ListItemButton onClick={() => setSelectedMenu('Monthly Sales')}>
+		<ListItemButton component={Link} to="/monthly-sales">
 			<StyledListItemIcon>
 				<BsCalendar2Month />
 			</StyledListItemIcon>
 			<ListItemText primary="Monthly Sales" />
 		</ListItemButton>
-		<ListItemButton onClick={() => setSelectedMenu('Yearly Sales')}>
+		<ListItemButton component={Link} to="/yearly-sales">
 			<StyledListItemIcon>
 				<FcCalendar />
 			</StyledListItemIcon>
@@ -59,16 +60,16 @@ export const SecondaryListItems = ({ setSelectedMenu }) => (
 	</React.Fragment>
 );
 
-export const SettingsListItems = ({ setSelectedMenu }) => (
+export const SettingsListItems = () => (
 	<React.Fragment>
 		<StyledListSubheader component="div">Settings</StyledListSubheader>
-		<ListItemButton onClick={() => setSelectedMenu('Database')}>
+		<ListItemButton component={Link} to="/database">
 			<StyledListItemIcon>
 				<TbDatabaseCog />
 			</StyledListItemIcon>
 			<ListItemText primary="Database" />
 		</ListItemButton>
-		<ListItemButton onClick={() => setSelectedMenu('Settings')}>
+		<ListItemButton component={Link} to="/settings">
 			<StyledListItemIcon>
 				<FiSettings />
 			</StyledListItemIcon>

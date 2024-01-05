@@ -14,6 +14,9 @@ export const getOneDailyTotal = async (teamMemberId, dailyTotalId) => {
 };
 
 export const updateDailyTotal = async (teamMemberId, dailyTotalId, updatedDailyTotal) => {
+	console.log("🚀 ~ file: salesTotals.js:17 ~ updateDailyTotal ~ teamMemberId:", teamMemberId)
+	console.log("🚀 ~ file: salesTotals.js:18 ~ updateDailyTotal ~ dailyTotalId:", dailyTotalId)
+	console.log("🚀 ~ file: salesTotals.js:19 ~ updateDailyTotal ~ updatedDailyTotal:", updatedDailyTotal)
 	try {
 		const response = await axios.patch(
 			`${process.env.REACT_APP_SERVER_URL}/teamMembers/${teamMemberId}/dailyTotals/${dailyTotalId}`,

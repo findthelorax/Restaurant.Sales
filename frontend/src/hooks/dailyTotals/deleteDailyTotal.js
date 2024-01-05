@@ -3,14 +3,15 @@ import { TeamMembersContext } from '../../contexts/TeamMembersContext'; // impor
 import { deleteDailyTotalFromServer } from '../../api/salesTotals';
 import { FormattedDate } from '../formatDate';
 import { handleDailyTotalDeletion } from '../tipOuts';
+import { prepareDailyTotals } from '../dailyTotals/prepareDailyTotals';
 
 export const useDeleteDailyTotal = (fetchAllDailyTotals, setRefreshDailyTotals) => {
 	const { teamMembers, setTeamMembers } = useContext(TeamMembersContext); // use setTeam from TeamContext
 
 	return useCallback(
 		async (teamMember, dailyTotal) => {
-			console.log("🚀 ~ file: deleteDailyTotal.js:11 ~ teamMember:", teamMember)
-			console.log("🚀 ~ file: deleteDailyTotal.js:11 ~ dailyTotal:", dailyTotal)
+			console.log('🚀 ~ file: deleteDailyTotal.js:11 ~ teamMember:', teamMember);
+			console.log('🚀 ~ file: deleteDailyTotal.js:11 ~ dailyTotal:', dailyTotal);
 			const confirmation = window.confirm(
 				`ARE YOU SURE YOU WANT TO DELETE THE DAILY TOTAL FOR:\n\n${teamMember.teamMemberFirstName}\n\n${
 					teamMember.teamMemberLastName
@@ -31,7 +32,6 @@ export const useDeleteDailyTotal = (fetchAllDailyTotals, setRefreshDailyTotals) 
 				console.log(response);
 				setRefreshDailyTotals((prevState) => !prevState); // add this line
 				if (response.status === 200) {
-
 					handleDailyTotalDeletion(dailyTotal, teamMembers);
 
 					// Find the index of the team member whose daily total was deleted
@@ -47,6 +47,20 @@ export const useDeleteDailyTotal = (fetchAllDailyTotals, setRefreshDailyTotals) 
 						// Create a new team members array with the updated team member
 						const newTeamMembers = [...teamMembers];
 						newTeamMembers[index] = updatedTeamMember;
+
+						// Filter the teamMembers to only include members of the same team
+						const sameTeamMembers = newTeamMembers.filter((member) => member.team === teamMember.team);
+
+						// Prepare daily totals after deletion
+						const updatedDailyTotals = prepareDailyTotals(
+							updatedTeamMember,
+							updatedTeamMember.dailyTotals,
+							sameTeamMembers,
+							'delete'
+						);
+
+						// Update the daily totals of the updated team member
+						updatedTeamMember.dailyTotals = updatedDailyTotals;
 
 						setTeamMembers(newTeamMembers); // set the new team array
 						console.log('🚀 ~ file: deleteDailyTotal.js:40 ~ newTeamMembers:', newTeamMembers);

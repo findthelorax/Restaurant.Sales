@@ -4,7 +4,6 @@ const moment = require('moment');
 require('dotenv').config();
 
 function validateDailyTotal(dailyTotal) {
-	// dailyTotal.date = moment.utc(dailyTotal.date).hours(12).toDate();
 	dailyTotal.date = moment.utc(dailyTotal.date);
 	return (
 		dailyTotal.date && dailyTotal.foodSales && dailyTotal.barSales && dailyTotal.nonCashTips && dailyTotal.cashTips
@@ -328,15 +327,9 @@ exports.deleteDailyTotal = async (req, res) => {
 exports.updateDailyTotal = async (req, res) => {
 	try {
 		const { teamMemberId, dailyTotalId } = req.params;
+		console.log("🚀 ~ file: TeamMembersController.js:330 ~ exports.updateDailyTotal= ~ req.params:", req.params)
 		const updatedDailyTotal = req.body;
-
-		// Validate updatedDailyTotal
-		if (!validateDailyTotal(updatedDailyTotal)) {
-			return res.status(400).json({
-				success: false,
-				message: 'updatedDailyTotal must have all required fields.',
-			});
-		}
+		console.log("🚀 ~ file: TeamMembersController.js:332 ~ exports.updateDailyTotal= ~ req.body:", req.body)
 
 		const teamMember = await TeamMember.findById(teamMemberId);
 
