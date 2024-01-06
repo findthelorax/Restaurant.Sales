@@ -1,30 +1,18 @@
-import { CalculateTipOuts } from '../tipOuts';
+import { calculateTipOuts } from '../calculateTipOuts';
 
-export const prepareDailyTotals = (selectedTeamMember, dailyTotals, teamMembers, action) => {
-    const tipOuts = CalculateTipOuts(selectedTeamMember, dailyTotals, teamMembers);
-    const totalTipOut = tipOuts.Bartender + tipOuts.Runner + tipOuts.Host;
+export const prepareDailyTotals = async (selectedTeamMember, dailyTotals, date, foodSales, barSales, teamMembers) => {
+    const tipOuts = await calculateTipOuts(selectedTeamMember, date, foodSales, barSales, dailyTotals.nonCashTips, dailyTotals.cashTips);
+    const totalTipOut = tipOuts.bartender + tipOuts.runner + tipOuts.host;
     const tipsReceived = Number(dailyTotals.nonCashTips) + Number(dailyTotals.cashTips);
     const totalPayrollTips = tipsReceived - totalTipOut;
 
-    // If a daily total is being submitted, add the new daily total
-    if (action === 'submit') {
-        return {
-            ...dailyTotals,
-            barTipOuts: tipOuts.Bartender,
-            runnerTipOuts: tipOuts.Runner,
-            hostTipOuts: tipOuts.Host,
-            totalTipOut,
-            tipsReceived,
-            totalPayrollTips,
-        };
-    }
-
-    // If a daily total is being deleted, remove the daily total
-    if (action === 'delete') {
-        const updatedDailyTotals = { ...dailyTotals };
-        delete updatedDailyTotals[selectedTeamMember._id];
-        return updatedDailyTotals;
-    }
-
-    return dailyTotals;
+    return {
+        ...dailyTotals,
+        barTipOuts: tipOuts.bartender,
+        runnerTipOuts: tipOuts.runner,
+        hostTipOuts: tipOuts.host,
+        totalTipOut,
+        tipsReceived,
+        totalPayrollTips,
+    };
 };

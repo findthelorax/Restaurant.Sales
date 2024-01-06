@@ -39,7 +39,7 @@ export const deleteTeamMemberFromTeam = (setTeam) => {
 				const sameTeamMembers = updatedTeam.filter((member) => member.team === teamOfDeletedMember);
 				// Recalculate daily totals for each remaining team member in the same team
 				sameTeamMembers.forEach(member => {
-					const updatedDailyTotals = prepareDailyTotals(member, member.dailyTotals, sameTeamMembers, 'delete');
+					const updatedDailyTotals = prepareDailyTotals(member, member.dailyTotals, sameTeamMembers);
 					member.dailyTotals = updatedDailyTotals;
 				});
 				return updatedTeam;
