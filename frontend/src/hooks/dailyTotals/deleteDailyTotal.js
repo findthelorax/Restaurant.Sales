@@ -2,8 +2,11 @@ import { useCallback, useContext } from 'react';
 import { TeamMembersContext } from '../../contexts/TeamMembersContext'; // import TeamContext
 import { deleteDailyTotalFromServer } from '../../api/salesTotals';
 import { FormattedDate } from '../formatDate';
-import { handleDailyTotalDeletion } from '../tipOuts';
-import { prepareDailyTotals } from '../dailyTotals/prepareDailyTotals';
+import { calculateTipOuts } from '../calculateTipOuts';
+
+const removeDateFromSchedule = (schedule, dateToRemove) => {
+	return schedule.filter(date => date !== dateToRemove);
+};
 
 export const useDeleteDailyTotal = (fetchAllDailyTotals, setRefreshDailyTotals) => {
 	const { teamMembers, setTeamMembers } = useContext(TeamMembersContext); // use setTeam from TeamContext
@@ -32,7 +35,8 @@ export const useDeleteDailyTotal = (fetchAllDailyTotals, setRefreshDailyTotals) 
 				console.log(response);
 				setRefreshDailyTotals((prevState) => !prevState); // add this line
 				if (response.status === 200) {
-					handleDailyTotalDeletion(dailyTotal, teamMembers);
+					// Calculate the tip outs after deletion
+					await calculateTipOuts(teamMember, dailyTotal.date, dailyTotal.foodSales, dailyTotal.barSales, dailyTotal.nonCashTips, dailyTotal.cashTips, teamMembers);
 
 					// Find the index of the team member whose daily total was deleted
 					const index = teamMembers.findIndex((member) => member._id === teamMember._id);
@@ -42,25 +46,12 @@ export const useDeleteDailyTotal = (fetchAllDailyTotals, setRefreshDailyTotals) 
 						const updatedTeamMember = {
 							...teamMembers[index],
 							dailyTotals: teamMembers[index].dailyTotals.filter((total) => total._id !== dailyTotal._id),
+							workSchedule: removeDateFromSchedule(teamMembers[index].workSchedule, dailyTotal.date) // Remove the date from the workSchedule
 						};
 
 						// Create a new team members array with the updated team member
 						const newTeamMembers = [...teamMembers];
 						newTeamMembers[index] = updatedTeamMember;
-
-						// Filter the teamMembers to only include members of the same team
-						const sameTeamMembers = newTeamMembers.filter((member) => member.team === teamMember.team);
-
-						// Prepare daily totals after deletion
-						const updatedDailyTotals = prepareDailyTotals(
-							updatedTeamMember,
-							updatedTeamMember.dailyTotals,
-							sameTeamMembers,
-							'delete'
-						);
-
-						// Update the daily totals of the updated team member
-						updatedTeamMember.dailyTotals = updatedDailyTotals;
 
 						setTeamMembers(newTeamMembers); // set the new team array
 						console.log('🚀 ~ file: deleteDailyTotal.js:40 ~ newTeamMembers:', newTeamMembers);
