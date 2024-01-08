@@ -49,6 +49,101 @@ const TeamMemberSchema = new mongoose.Schema({
 });
 
 TeamMemberSchema.index({ teamMemberFirstName: 1, teamMemberLastName: 1, position: 1 }, { unique: true });
+TeamMemberSchema.index({ 'workSchedule': 1 });
+TeamMemberSchema.index({ 'dailyTotals.date': 1 });
+TeamMemberSchema.index({ 'weeklyTotals.weekStart': 1 });
+
+
+/* 
+To efficiently compare the dailyTotals date with the workSchedule dates for team members on the same team, you can use the following approach:
+
+Create an index on the workSchedule and dailyTotals.date fields in the TeamMemberSchema to speed up the search operation. MongoDB supports indexing on array fields.
+
+When adding a new dailyTotal, fetch the workSchedule of all team members on the same team. You can use the $in operator to match the teams field with the team ID.
+
+Use the $elemMatch operator to find team members who have the dailyTotal date in their workSchedule. This operator matches documents where the array field contains at least one element that satisfies all the specified query criteria.
+
+Here is the pseudocode for the operation:
+
+1. Create index on workSchedule and dailyTotals.date in TeamMemberSchema
+2. When adding a new dailyTotal:
+	1. Fetch the workSchedule of all team members on the same team using $in operator
+	2. Use $elemMatch operator to find team members who have the dailyTotal date in their workSchedule
+
+And here is the MongoDB query in JavaScript:
+
+// Assuming `teamId` is the ID of the team and `newDailyTotalDate` is the date of the new daily total
+TeamMember.find({
+	teams: teamId,
+	workSchedule: {
+		$elemMatch: {
+			$eq: newDailyTotalDate
+		}
+	}
+}).then(teamMembers => {
+	// `teamMembers` now contains all team members on the same team who have the `newDailyTotalDate` in their work schedule
+});
+
+Remember to replace teamId and newDailyTotalDate with the actual team ID and new daily total date.
+
+To efficiently update the dailyTotals of team members who have the same workSchedule date as a new dailyTotal, you can use the following approach:
+
+Use the $elemMatch operator to find team members who have the dailyTotal date in their workSchedule. This operator matches documents where the array field contains at least one element that satisfies all the specified query criteria.
+
+Use the $push operator to add the new dailyTotal to the dailyTotals array of the matched team members.
+
+Here is the pseudocode for the operation:
+
+1. Use $elemMatch operator to find team members who have the dailyTotal date in their workSchedule
+2. Use $push operator to add the new dailyTotal to the dailyTotals array of the matched team members
+
+And here is the MongoDB query in JavaScript:
+
+// Assuming `teamId` is the ID of the team and `newDailyTotal` is the new daily total object
+TeamMember.updateMany({
+	teams: teamId,
+	workSchedule: {
+		$elemMatch: {
+			$eq: newDailyTotal.date
+		}
+	}
+}, {
+	$push: {
+		dailyTotals: newDailyTotal
+	}
+}).then(result => {
+	// `result` contains the result of the update operation
+});
+
+Remember to replace teamId and newDailyTotal with the actual team ID and new daily total object.
+
+Once you've created the indexes on workSchedule and dailyTotals.date, MongoDB will automatically use these indexes when performing queries that involve these fields. This can significantly speed up the search operation. You don't need to do anything else to use the indexes.
+
+For example, if you're querying for team members who have a specific date in their workSchedule, MongoDB will use the index on workSchedule to speed up the query:
+
+TeamMember.find({
+	workSchedule: {
+		$elemMatch: {
+			$eq: someDate
+		}
+	}
+}).then(teamMembers => {
+	// `teamMembers` now contains all team members who have `someDate` in their work schedule
+});
+
+Similarly, if you're querying for team members who have a specific date in their dailyTotals.date, MongoDB will use the index on dailyTotals.date to speed up the query:
+
+TeamMember.find({
+	'dailyTotals.date': {
+		$eq: someDate
+	}
+}).then(teamMembers => {
+	// `teamMembers` now contains all team members who have `someDate` in their daily totals
+});
+
+Remember to replace someDate with the actual date you're querying for.
+
+*/
 
 TeamMemberSchema.pre('save', function (next) {
 	if (this.teamMemberFirstName && this.isModified('teamMemberFirstName')) {
