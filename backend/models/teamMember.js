@@ -160,8 +160,8 @@ TeamMemberSchema.methods.addDailyTotal = function (dailyTotal) {
 	this.dailyTotals.push(dailyTotal);
 
 	// Get the start of the week for the daily total
-	const weekStart = moment(dailyTotal.date).startOf('week').toDate();
-	const weekEnd = moment(dailyTotal.date).endOf('week').toDate();
+    const weekStart = startOfWeek(dailyTotal.date, { weekStartsOn: 1 });
+    const weekEnd = endOfWeek(dailyTotal.date, { weekStartsOn: 1 });
 
 	// Find the index of the corresponding weekly total
 	const index = this.weeklyTotals.findIndex((total) => total.weekStart === weekStart);
@@ -237,14 +237,13 @@ TeamMemberSchema.pre('remove', async function (next) {
 
 TeamMemberSchema.methods.updateWeeklyTotals = function (dailyTotalDate) {
 	// Get the start and end of the current week
-	const weekStart = moment.utc(dailyTotalDate).startOf('week').toDate();
-	const weekEnd = moment.utc(dailyTotalDate).endOf('week').toDate();
+    const weekStart = startOfWeek(dailyTotalDate, { weekStartsOn: 1 });
+    const weekEnd = endOfWeek(dailyTotalDate, { weekStartsOn: 1 });
 
 	// Filter the daily totals for the current week
-	const thisWeeksDailyTotals = this.dailyTotals.filter((total) => {
-		const date = moment(total.date);
-		return date.isSameOrAfter(weekStart) && date.isSameOrBefore(weekEnd);
-	});
+    const thisWeeksDailyTotals = this.dailyTotals.filter((total) => {
+        return isWithinInterval(total.date, { start: weekStart, end: weekEnd });
+    });
 
 	// Calculate the weekly total for the current week
 	const weeklyTotal = thisWeeksDailyTotals.reduce(
@@ -310,15 +309,15 @@ TeamMemberSchema.methods.updateWeeklyTotals = function (dailyTotalDate) {
 };
 
 TeamMemberSchema.methods.getWeeklyTotals = function (weekStart) {
-	const weekEnd = moment(weekStart).endOf('week').toDate();
+    const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
 
-	const weeklyTotal = this.weeklyTotals.find(
-		(total) =>
-			moment(total.weekStart).isSameOrAfter(weekStart, 'day') &&
-			moment(total.weekEnd).isSameOrBefore(weekEnd, 'day')
-	);
+    const weeklyTotal = this.weeklyTotals.find(
+        (total) =>
+            isSameOrAfter(total.weekStart, weekStart) &&
+            isSameOrBefore(total.weekEnd, weekEnd)
+    );
 
-	return weeklyTotal;
+    return weeklyTotal;
 };
 
 const TeamMember = mongoose.model('TeamMember', TeamMemberSchema, 'teamMembers');
