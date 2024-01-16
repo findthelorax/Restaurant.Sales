@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
-const moment = require('moment');
 const Schema = mongoose.Schema;
 const Team = require('./team');
+const { getMonth, startOfWeek, endOfWeek, isSameDay, isAfter, isBefore, isEqual, parseISO } = require('date-fns');
 
 const DailyTotalSchema = new mongoose.Schema({
 	date: Date,
+	month: Number,
 	foodSales: Number,
 	barSales: Number,
 	nonCashTips: Number,
@@ -15,6 +16,11 @@ const DailyTotalSchema = new mongoose.Schema({
 	totalTipOut: Number,
 	tipsReceived: Number,
 	totalPayrollTips: Number,
+});
+
+DailyTotalSchema.pre('save', function (next) {
+	this.month = this.date.getMonth();
+	next();
 });
 
 const WeeklyTotalSchema = new mongoose.Schema({
@@ -30,6 +36,18 @@ const WeeklyTotalSchema = new mongoose.Schema({
 	totalTipOut: Number,
 	tipsReceived: Number,
 	totalPayrollTips: Number,
+	tipOuts: [
+		{
+			teamMemberId: mongoose.Schema.Types.ObjectId,
+			amount: Number,
+		},
+	],
+	tipsReceivedFrom: [
+		{
+			serverId: mongoose.Schema.Types.ObjectId,
+			amount: Number,
+		},
+	],
 });
 
 const TeamMemberSchema = new mongoose.Schema({
@@ -37,9 +55,12 @@ const TeamMemberSchema = new mongoose.Schema({
 	teamMemberLastName: String,
 	position: String,
 	teams: [{ type: Schema.Types.ObjectId, ref: 'Team' }],
-	workSchedule: [{
-		type: Date
-	}],
+	workSchedule: [
+		{
+			month: Number,
+			dates: [Date],
+		},
+	],
 	timeZone: {
 		type: String,
 		default: 'UTC',
@@ -49,10 +70,180 @@ const TeamMemberSchema = new mongoose.Schema({
 });
 
 TeamMemberSchema.index({ teamMemberFirstName: 1, teamMemberLastName: 1, position: 1 }, { unique: true });
-TeamMemberSchema.index({ 'workSchedule': 1 });
+TeamMemberSchema.index({ workSchedule: 1 });
 TeamMemberSchema.index({ 'dailyTotals.date': 1 });
 TeamMemberSchema.index({ 'weeklyTotals.weekStart': 1 });
 
+TeamMemberSchema.methods.addWorkDate = async function(workDate) {
+	// Parse the workDate and get the month
+	const date = parseISO(workDate);
+	const month = getMonth(date);
+
+	// Find the work schedule for the month
+	let workSchedule = this.workSchedule.find((schedule) => schedule.month === month);
+
+	// If no work schedule exists for the month, create a new one
+	if (!workSchedule) {
+		workSchedule = { month, dates: [] };
+		this.workSchedule.push(workSchedule);
+	}
+
+	// Check if the dates array already contains the new workDate
+	const hasDate = workSchedule.dates.some((existingDate) => isEqual(existingDate, date));
+
+	// If the dates array does not contain the new workDate, add it
+	if (!hasDate) {
+		workSchedule.dates.push(date);
+	}
+
+	await this.save();
+
+	// If the team member is a host
+	if (this.position === 'host') {
+		// Find all servers who worked on the same date
+		const servers = await this.model('TeamMember').find({
+			position: 'server',
+			workSchedule: {
+				$elemMatch: {
+					month,
+					dates: {
+						$elemMatch: {
+							$eq: date,
+						},
+					},
+				},
+			},
+		});
+
+		// Update the hostTipOuts field for each server and the tipsReceived field for the host
+		for (const server of servers) {
+			const tipOut = server.foodSales * 0.015;
+			server.hostTipOuts += tipOut;
+			server.tipOuts.push({ teamMemberId: this._id, amount: tipOut });
+			this.tipsReceived += tipOut;
+			this.tipsReceivedFrom.push({ serverId: server._id, amount: tipOut });
+			await server.save();
+		}
+		await this.save();
+	}
+	// If the team member is a runner
+	else if (this.position === 'runner') {
+		// Find all servers who worked on the same date
+		const servers = await this.model('TeamMember').find({
+			position: 'server',
+			workSchedule: {
+				$elemMatch: {
+					month,
+					dates: {
+						$elemMatch: {
+							$eq: date,
+						},
+					},
+				},
+			},
+		});
+
+		// Update the runnerTipOuts field for each server and the tipsReceived field for the runner
+		for (const server of servers) {
+			const tipOut = server.foodSales * 0.04;
+			server.runnerTipOuts += tipOut;
+			server.tipOuts.push({ teamMemberId: this._id, amount: tipOut });
+			this.tipsReceived += tipOut;
+			this.tipsReceivedFrom.push({ serverId: server._id, amount: tipOut });
+			await server.save();
+		}
+		await this.save();
+	}
+};
+
+TeamMemberSchema.methods.removeWorkDate = async function(workDate) {
+	// Parse the workDate and get the month
+	const date = parseISO(workDate);
+	const month = getMonth(date);
+
+	// Find the work schedule for the month
+	let workSchedule = this.workSchedule.find((schedule) => schedule.month === month);
+
+	// If a work schedule exists for the month
+	if (workSchedule) {
+		// Find the index of the workDate in the dates array
+		const dateIndex = workSchedule.dates.findIndex((existingDate) => isEqual(existingDate, date));
+
+		// If the dates array contains the workDate, remove it
+		if (dateIndex !== -1) {
+			workSchedule.dates.splice(dateIndex, 1);
+
+			// If the team member is a host
+			if (this.position === 'host') {
+				// Find all servers who worked on the same date
+				const servers = await this.model('TeamMember').find({
+					position: 'server',
+					workSchedule: {
+						$elemMatch: {
+							month,
+							dates: {
+								$elemMatch: {
+									$eq: date,
+								},
+							},
+						},
+					},
+				});
+
+				// Update the hostTipOuts field for each server and the tipsReceived field for the host
+				for (const server of servers) {
+					const tipOut = server.foodSales * 0.015;
+					server.hostTipOuts -= tipOut;
+					const tipOutIndex = server.tipOuts.findIndex(tipOut => tipOut.teamMemberId.equals(this._id));
+					if (tipOutIndex !== -1) {
+						server.tipOuts.splice(tipOutIndex, 1);
+					}
+					this.tipsReceived -= tipOut;
+					const tipsReceivedFromIndex = this.tipsReceivedFrom.findIndex(tip => tip.serverId.equals(server._id));
+					if (tipsReceivedFromIndex !== -1) {
+						this.tipsReceivedFrom.splice(tipsReceivedFromIndex, 1);
+					}
+					await server.save();
+				}
+				await this.save();
+			}
+			// If the team member is a runner
+			else if (this.position === 'runner') {
+				// Find all servers who worked on the same date
+				const servers = await this.model('TeamMember').find({
+					position: 'server',
+					workSchedule: {
+						$elemMatch: {
+							month,
+							dates: {
+								$elemMatch: {
+									$eq: date,
+								},
+							},
+						},
+					},
+				});
+
+				// Update the runnerTipOuts field for each server and the tipsReceived field for the runner
+				for (const server of servers) {
+					const tipOut = server.foodSales * 0.04;
+					server.runnerTipOuts -= tipOut;
+					const tipOutIndex = server.tipOuts.findIndex(tipOut => tipOut.teamMemberId.equals(this._id));
+					if (tipOutIndex !== -1) {
+						server.tipOuts.splice(tipOutIndex, 1);
+					}
+					this.tipsReceived -= tipOut;
+					const tipsReceivedFromIndex = this.tipsReceivedFrom.findIndex(tip => tip.serverId.equals(server._id));
+					if (tipsReceivedFromIndex !== -1) {
+						this.tipsReceivedFrom.splice(tipsReceivedFromIndex, 1);
+					}
+					await server.save();
+				}
+				await this.save();
+			}
+		}
+	}
+};
 
 /* 
 To efficiently compare the dailyTotals date with the workSchedule dates for team members on the same team, you can use the following approach:
@@ -156,12 +347,13 @@ TeamMemberSchema.pre('save', function (next) {
 });
 
 TeamMemberSchema.methods.addDailyTotal = function (dailyTotal) {
+	dailyTotal.month = getMonth(dailyTotal.date);
 	// Add the daily total
 	this.dailyTotals.push(dailyTotal);
 
 	// Get the start of the week for the daily total
-	const weekStart = moment(dailyTotal.date).startOf('week').toDate();
-	const weekEnd = moment(dailyTotal.date).endOf('week').toDate();
+	const weekStart = startOfWeek(new Date(dailyTotal.date));
+	const weekEnd = endOfWeek(new Date(dailyTotal.date));
 
 	// Find the index of the corresponding weekly total
 	const index = this.weeklyTotals.findIndex((total) => total.weekStart === weekStart);
@@ -224,26 +416,26 @@ TeamMemberSchema.pre('save', function (next) {
 });
 
 TeamMemberSchema.pre('remove', async function (next) {
-    const teamMember = this;
+	const teamMember = this;
 
-    // Find the team that the member is part of and remove the member from it
-    await Team.updateMany(
-        { teamMembers: teamMember._id },
-        { $pull: { teamMembers: teamMember._id } }
-    );
+	// Find the team that the member is part of and remove the member from it
+	await Team.updateMany({ teamMembers: teamMember._id }, { $pull: { teamMembers: teamMember._id } });
 
-    next();
+	next();
 });
 
 TeamMemberSchema.methods.updateWeeklyTotals = function (dailyTotalDate) {
 	// Get the start and end of the current week
-	const weekStart = moment.utc(dailyTotalDate).startOf('week').toDate();
-	const weekEnd = moment.utc(dailyTotalDate).endOf('week').toDate();
+	const weekStart = startOfWeek(parseISO(dailyTotalDate));
+	const weekEnd = endOfWeek(parseISO(dailyTotalDate));
 
 	// Filter the daily totals for the current week
 	const thisWeeksDailyTotals = this.dailyTotals.filter((total) => {
-		const date = moment(total.date);
-		return date.isSameOrAfter(weekStart) && date.isSameOrBefore(weekEnd);
+		const date = parseISO(total.date);
+		return (
+			(isSameDay(date, weekStart) || isAfter(date, weekStart)) &&
+			(isSameDay(date, weekEnd) || isBefore(date, weekEnd))
+		);
 	});
 
 	// Calculate the weekly total for the current week
@@ -279,8 +471,8 @@ TeamMemberSchema.methods.updateWeeklyTotals = function (dailyTotalDate) {
 	);
 
 	// Find the existing weekly total for the current week
-	const existingWeeklyTotalIndex = this.weeklyTotals.findIndex(
-		(total) => total.weekStart.getTime() === weekStart.getTime()
+	const existingWeeklyTotalIndex = this.weeklyTotals.findIndex((total) =>
+		isEqual(parseISO(total.weekStart), weekStart)
 	);
 
 	// Update the existing weekly total or add a new one
@@ -310,12 +502,12 @@ TeamMemberSchema.methods.updateWeeklyTotals = function (dailyTotalDate) {
 };
 
 TeamMemberSchema.methods.getWeeklyTotals = function (weekStart) {
-	const weekEnd = moment(weekStart).endOf('week').toDate();
+	const weekEnd = endOfWeek(weekStart);
 
 	const weeklyTotal = this.weeklyTotals.find(
 		(total) =>
-			moment(total.weekStart).isSameOrAfter(weekStart, 'day') &&
-			moment(total.weekEnd).isSameOrBefore(weekEnd, 'day')
+			(isSameDay(parseISO(total.weekStart), weekStart) || isAfter(parseISO(total.weekStart), weekStart)) &&
+			(isSameDay(parseISO(total.weekEnd), weekEnd) || isBefore(parseISO(total.weekEnd), weekEnd))
 	);
 
 	return weeklyTotal;

@@ -546,11 +546,8 @@ exports.getWorkSchedule = async (req, res) => {
 
 exports.addWorkDate = async (req, res) => {
 	try {
-		const updatedTeamMember = await TeamMember.findByIdAndUpdate(
-			req.params.teamMemberId,
-			{ $push: { workSchedule: req.body.workDate } },
-			{ new: true }
-		);
+		const teamMember = await TeamMember.findById(req.params.teamMemberId);
+		const updatedTeamMember = await teamMember.addWorkDate(req.body.workDate);
 		res.json(updatedTeamMember);
 	} catch (err) {
 		res.json({ message: err });
