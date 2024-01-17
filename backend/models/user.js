@@ -1,6 +1,7 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+import { Profile } from './profile';
 
 const schema = Joi.object({
     username: Joi.string().alphanum().min(8).max(30).required(),
@@ -15,13 +16,9 @@ const UserSchema = new mongoose.Schema({
         enum: ['root', 'admin', 'user'],
         default: 'user'
     },
-    avatar: String,
-    city: String,
-    country: { type: String, default: 'USA' },
-    jobTitle: String,
-    name: String,
-    timezone: { type: String, default: 'UTC' },
-});
+    profile: Profile.schema,
+    team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' }
+}, {timestamps: true});
 
 UserSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
